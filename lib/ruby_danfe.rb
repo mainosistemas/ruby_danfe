@@ -33,9 +33,9 @@ module RubyDanfe
     def render
       RubyDanfe.render @xml.to_s
     end
-    def collect(css, &block)
+    def collect(xpath, &block)
       result = []
-      @xml.css(css).each do |det|
+      @xml.xpath(xpath).each do |det|
         result << yield(det)
       end
       result
@@ -259,7 +259,7 @@ module RubyDanfe
     
     pdf.font_size(6) do
       pdf.itable 6.37, 21.50, 0.25, 18.17, 
-        xml.collect(det) { |det|
+        xml.collect('descendant-or-self::det') { |det|
           [
             det.css('prod/cProd').text, #I02
             det.css('prod/xProd').text, #I04
