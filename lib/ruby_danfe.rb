@@ -40,6 +40,12 @@ module RubyDanfe
       end
       result
     end
+    def homologacao?
+      @xml.xpath('//NFe//tpAmb').first.text == '2'
+    end
+    def previa?
+      
+    end
   end
   
   class Document < Prawn::Document
@@ -299,6 +305,13 @@ module RubyDanfe
           table.column(0..13).border_width = 1
           table.column(0..13).borders = [:bottom]
         end
+    end
+
+    # MARCA D'AGUA
+    if xml.homologacao?
+      pdf.fill_color "5a5a5a"
+      pdf.draw_text "SEM VALOR FISCAL", :at => [65,210], :size => 50
+      pdf.draw_text "AMBIENTE DE HOMOLOGAÇÃO", :at => [65,180], :size => 31
     end
     
     pdf.page_count.times do |i|
