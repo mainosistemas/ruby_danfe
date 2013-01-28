@@ -41,7 +41,7 @@ module RubyDanfe
       result
     end
     def homologacao?
-      @xml.xpath('//NFe//tpAmb').first.text == '2'
+      @xml['//NFe//tpAmb'] == '2'
     end
     def previa?
       !@xml.css('protNFe nProt').any?
