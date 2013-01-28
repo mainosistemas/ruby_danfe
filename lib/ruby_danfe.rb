@@ -66,6 +66,10 @@ module RubyDanfe
     def ibox(h, w, x, y, title = '', info = '', options = {})
       box [x.cm, invert(y.cm)], w.cm, h.cm, title, info, options
     end
+
+    def iimage(h, w, x, y, document)
+      self.image document, :at => [x.cm, invert(y.cm)], :width => (w.present? ? w.cm : nil), :height => (h.present? ? h.cm : nil)
+    end
     
     def idate(h, w, x, y, title = '', info = '', options = {})
       tt = info.split('-')
@@ -131,14 +135,25 @@ module RubyDanfe
   	  "SÉRIE " + xml['ide/serie'], {:align => :center, :valign => :center}
 
     # EMITENTE
-    
-    pdf.ibox 3.92, 7.46, 0.25, 2.54, '', 
+
+    valign = :center
+
+    if File.file?("/opt/logos_danfe/#{xml['emit/CNPJ']}.jpg")
+      logo = "/opt/logos_danfe/#{xml['emit/CNPJ']}.jpg"
+      # iimage(h, w, x, y, document)
+      # largura da caixa / 2 - 0.5w
+      pdf.iimage nil, 2.48, 2.49, 2.56, logo
+      valign = :bottom
+    end
+
+    pdf.ibox 3.92, 7.46, 0.25, 2.54, '',
       xml['emit/xNome'] + "\n" +
       xml['enderEmit/xLgr'] + ", " + xml['enderEmit/nro'] + "\n" + 
       xml['enderEmit/xBairro'] + " - " + xml['enderEmit/CEP'] + "\n" +
       xml['enderEmit/xMun'] + "/" + xml['enderEmit/UF'] + "\n" +
-      xml['enderEmit/fone'] + " " + xml['enderEmit/email'], {:align => :center, :valign => :center}
-      
+      xml['enderEmit/fone'] + " " + xml['enderEmit/email'], {:align => :center, :valign => valign}
+
+
     pdf.ibox 3.92, 3.08, 7.71, 2.54
     
     pdf.ibox 0.60, 3.08, 7.71, 2.54, '', "DANFE", {:size => 12, :align => :center, :border => 0, :style => :bold}
@@ -159,7 +174,7 @@ module RubyDanfe
 	  pdf.ibox 0.85, 6.86, 0.25, 7.31, "INSCRIÇÃO ESTADUAL", xml['emit/IE']
 	  pdf.ibox 0.85, 6.86, 7.11, 7.31, "INSC.ESTADUAL DO SUBST. TRIBUTÁRIO", xml['emit/IE_ST']
 	  pdf.ibox 0.85, 6.84, 13.97, 7.31, "CNPJ", xml['emit/CNPJ']
-            
+
     # TITULO
     
     pdf.ititle 0.42, 10.00, 0.25, 8.16, "DESTINATÁRIO / REMETENTE"
