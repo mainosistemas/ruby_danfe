@@ -46,6 +46,9 @@ module RubyDanfe
     def previa?
       !@xml.css('protNFe nProt').any?
     end
+    def chave_nfe
+      @xml['chNFe'].present? ? @xml['chNFe'] : @xml.css('infNFe').first.attr('Id').gsub(/\D/, '')
+    end
   end
   
   class Document < Prawn::Document
@@ -142,7 +145,7 @@ module RubyDanfe
       logo = "/opt/logos_danfe/#{xml['emit/CNPJ']}.jpg"
       # iimage(h, w, x, y, document)
       # largura da caixa / 2 - 0.5w
-      pdf.iimage nil, 2.48, 2.49, 2.56, logo
+      pdf.iimage nil, 2.48, 2.49, 2.60, logo
       valign = :bottom
     end
 
@@ -165,8 +168,8 @@ module RubyDanfe
   	  "SÉRIE " + xml['ide/serie'], {:size => 8, :align => :center, :valign => :center, :border => 0, :style => :bold}
         
     pdf.ibox 2.20, 10.02, 10.79, 2.54
-    pdf.ibarcode 1.50, 8.00, 10.9010, 4.44, xml['chNFe']
-    pdf.ibox 0.85, 10.02, 10.79, 4.74, "CHAVE DE ACESSO", xml['chNFe'].gsub(/(\d)(?=(\d\d\d\d)+(?!\d))/, "\\1 "), {:style => :bold, :align => :center}
+    pdf.ibarcode 1.50, 8.00, 10.9010, 4.44, xml.chave_nfe
+    pdf.ibox 0.85, 10.02, 10.79, 4.74, "CHAVE DE ACESSO", xml.chave_nfe.gsub(/(\d)(?=(\d\d\d\d)+(?!\d))/, "\\1 "), {:style => :bold, :align => :center}
     pdf.ibox 0.85, 10.02, 10.79, 5.60 , '', "Consulta de autenticidade no portal nacional da NF-e www.nfe.fazenda.gov.br/portal ou no site da Sefaz Autorizadora", {:align => :center, :size => 8}
 	  pdf.ibox 0.85, 10.54, 0.25, 6.46, "NATUREZA DA OPERAÇÃO", xml['ide/natOp']
 	  pdf.ibox 0.85, 10.02, 10.79, 6.46, "PROTOCOLO DE AUTORIZAÇÃO DE USO", xml['infProt/nProt'] + ' ' + xml['infProt/dhRecbto'], {:align => :center}
