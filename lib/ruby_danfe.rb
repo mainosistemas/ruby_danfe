@@ -82,7 +82,7 @@ module RubyDanfe
     
     def idate(h, w, x, y, title = '', info = '', options = {})
       tt = info.split('-')
-      ibox h, w, x, y, title, "#{tt[2]}/#{tt[1]}/#{tt[0]}", options
+      ibox(h, w, x, y, title, tt.any? ? "#{tt[2]}/#{tt[1]}/#{tt[0]}" : '', options)
     end
     
     def box(at, w, h, title = '', info = '', options = {})
@@ -200,7 +200,7 @@ module RubyDanfe
 	  pdf.ibox 0.85, 4.06, 7.36, 10.28, "FONE/FAX", xml['enderDest/fone']
 	  pdf.ibox 0.85, 1.14, 11.42, 10.28, "UF", xml['enderDest/UF']
 	  pdf.ibox 0.85, 5.33, 12.56, 10.28, "INSCRIÇÃO ESTADUAL", xml['dest/IE']
-	  pdf.idate 0.85, 2.92, 17.90, 10.28, "HORA DE SAÍDA", xml['ide/dSaiEnt'], {:align => :right}
+	  pdf.ibox 0.85, 2.92, 17.90, 10.28, "HORA DE SAÍDA", xml['ide/hSaiEnt'], {:align => :right}
 
     # FATURAS
     
