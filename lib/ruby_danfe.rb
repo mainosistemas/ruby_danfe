@@ -23,6 +23,7 @@ module RubyDanfe
   version = "0.9.0"
 
   class XML
+    attr_reader :xml
     def initialize(xml)
       @xml = Nokogiri::XML(xml)
     end
@@ -68,6 +69,11 @@ module RubyDanfe
     
     def ibox(h, w, x, y, title = '', info = '', options = {})
       box [x.cm, invert(y.cm)], w.cm, h.cm, title, info, options
+    end
+
+    def itext(x, y, text = '', options = {})
+      # pdf.draw_text "SEM VALOR FISCAL", :at => [65,210], :size => 50
+      draw_text text, {:at => [x.cm, invert(y.cm)]}.merge(options)
     end
 
     def iimage(h, w, x, y, document)
@@ -201,18 +207,18 @@ module RubyDanfe
     pdf.ititle 0.42, 10.00, 0.25, 11.12, "FATURA / DUPLICATAS"
     pdf.ibox 0.85, 20.57, 0.25, 11.51
 
-    if false
-	  pdf.box [0, 563], 63, 44, "Número"
-	  pdf.box [63, 563], 63, 44, "Vencimento"	
-	  pdf.box [126, 563], 63, 44, "Valor"
-	  pdf.box [189, 563], 63, 44, "Número"
-	  pdf.box [252, 563], 63, 44, "Vencimento"	
-	  pdf.box [315, 563], 63, 44, "Valor"
-	  pdf.box [378, 563], 63, 44, "Número"
-	  pdf.box [441, 563], 63, 44, "Vencimento"
-	  pdf.box [504, 563], 60, 44, "Valor"
+    faturas = xml.xml.css('cobr dup') rescue []
+    if faturas.any?
+      faturas.each_with_index do |fatura, index|
+        # itext(x, y, text = '', info = '', options = {})
+        # ibox(h, w, x, y, title = '', info = '', options = {})
+        pdf.ibox 0.85, 2.45, 2.5 * index + 0.25, 11.51
+        pdf.itext 2.5 * index + 0.30, 11.75, "Num.: #{fatura.css('nDup').text}", :size => 7
+        pdf.itext 2.5 * index + 0.30, 12.00, "Venc.: #{Date.parse(fatura.css('dVenc').text).strftime('%d/%m/%Y')}", :size => 7
+        pdf.itext 2.5 * index + 0.30, 12.25, "Valor.: #{fatura.css('vDup').text}", :size => 7
+      end
     end
-    
+
     pdf.ititle 0.42, 5.60, 0.25, 12.36, "CÁLCULO DO IMPOSTO"
 
   	pdf.inumeric 0.85, 4.06, 0.25, 12.78, "BASE DE CÁLCULO DO ICMS", xml['ICMSTot/vBC']
