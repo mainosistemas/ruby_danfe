@@ -41,14 +41,17 @@ module RubyDanfe
       end
       result
     end
+    def numero_nfe_formatado
+      ("%09d" % self['ide/nNF']).scan(/.{3}|.+/).join(".")
+    end
     def homologacao?
-      @xml['//NFe//tpAmb'] == '2'
+      self['//NFe//tpAmb'] == '2'
     end
     def previa?
       !@xml.css('protNFe nProt').any?
     end
     def chave_nfe
-      @xml['chNFe'].present? ? @xml['chNFe'] : @xml.css('infNFe').first.attr('Id').gsub(/\D/, '')
+      self['chNFe'].present? ? self['chNFe'] : @xml.css('infNFe').first.attr('Id').gsub(/\D/, '')
     end
   end
   
@@ -140,8 +143,8 @@ module RubyDanfe
 
   	pdf.ibox 1.70, 4.50, 16.35, 0.42, '', 
   	  "NF-e\n" +
-  	  "N°. " + xml['ide/nNF'] + "\n" +
-  	  "SÉRIE " + xml['ide/serie'], {:align => :center, :valign => :center}
+  	  "N°. " + xml.numero_nfe_formatado + "\n" +
+  	  "Série " + "%03d" % xml['ide/serie'], {:align => :center, :valign => :center}
 
     # EMITENTE
 
@@ -157,7 +160,7 @@ module RubyDanfe
 
     pdf.ibox 3.92, 7.46, 0.25, 2.54, '',
       xml['emit/xNome'] + "\n" +
-      xml['enderEmit/xLgr'] + ", " + xml['enderEmit/nro'] + "\n" + 
+      xml['enderEmit/xLgr'] + ", " + xml['enderEmit/nro'] + ", " + xml['enderEmit/xCpl'] + "\n" + 
       xml['enderEmit/xBairro'] + " - " + xml['enderEmit/CEP'] + "\n" +
       xml['enderEmit/xMun'] + "/" + xml['enderEmit/UF'] + "\n" +
       xml['enderEmit/fone'] + " " + xml['enderEmit/email'], {:align => :center, :valign => valign}
@@ -166,52 +169,52 @@ module RubyDanfe
     pdf.ibox 3.92, 3.08, 7.71, 2.54
     
     pdf.ibox 0.60, 3.08, 7.71, 2.54, '', "DANFE", {:size => 12, :align => :center, :border => 0, :style => :bold}
-    pdf.ibox 1.20, 3.08, 7.71, 3.14, '', "DOCUMENTO AUXILIAR DA NOTA FISCAL ELETRÔNICA", {:size => 8, :align => :center, :border => 0}
+    pdf.ibox 1.20, 3.08, 7.71, 3.14, '', "Documento Auxiliar da Nota Fiscal Eletrônica", {:size => 8, :align => :center, :border => 0}
     pdf.ibox 0.60, 3.08, 7.71, 4.34, '', "#{xml['ide/tpNF']} - " + (xml['ide/tpNF'] == '0' ? 'ENTRADA' : 'SAÍDA'), {:size => 8, :align => :center, :border => 0}
 
     pdf.ibox 1.00, 3.08, 7.71, 4.94, '', 
-  	  "N°. " + xml['ide/nNF'] + "\n" +
-  	  "SÉRIE " + xml['ide/serie'], {:size => 8, :align => :center, :valign => :center, :border => 0, :style => :bold}
+  	  "N°. " + xml.numero_nfe_formatado + "\n" +
+  	  "SÉRIE " + "%03d" % xml['ide/serie'], {:size => 8, :align => :center, :valign => :center, :border => 0, :style => :bold}
         
     pdf.ibox 2.20, 10.02, 10.79, 2.54
     pdf.ibarcode 1.50, 8.00, 10.9010, 4.44, xml.chave_nfe
     pdf.ibox 0.85, 10.02, 10.79, 4.74, "CHAVE DE ACESSO", xml.chave_nfe.gsub(/(\d)(?=(\d\d\d\d)+(?!\d))/, "\\1 "), {:style => :bold, :align => :center}
-    pdf.ibox 0.85, 10.02, 10.79, 5.60 , '', "Consulta de autenticidade no portal nacional da NF-e www.nfe.fazenda.gov.br/portal ou no site da Sefaz Autorizadora", {:align => :center, :size => 8}
-	  pdf.ibox 0.85, 10.54, 0.25, 6.46, "NATUREZA DA OPERAÇÃO", xml['ide/natOp']
+    pdf.ibox 0.85, 10.02, 10.79, 5.60 , '', "Consulta de autenticidade no portal nacional da NF-e\nwww.nfe.fazenda.gov.br/portal ou no site da Sefaz Autorizadora", {:align => :center, :size => 8}
+	  pdf.ibox 0.85, 10.54, 0.25, 6.46, "NATUREZA DA OPERAÇÃO", xml['ide/natOp'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 10.02, 10.79, 6.46, "PROTOCOLO DE AUTORIZAÇÃO DE USO", xml['infProt/nProt'] + ' ' + xml['infProt/dhRecbto'], {:align => :center}
 
-	  pdf.ibox 0.85, 6.86, 0.25, 7.31, "INSCRIÇÃO ESTADUAL", xml['emit/IE']
-	  pdf.ibox 0.85, 6.86, 7.11, 7.31, "INSC.ESTADUAL DO SUBST. TRIBUTÁRIO", xml['emit/IE_ST']
-	  pdf.ibox 0.85, 6.84, 13.97, 7.31, "CNPJ", xml['emit/CNPJ']
+	  pdf.ibox 0.85, 6.86, 0.25, 7.31, "INSCRIÇÃO ESTADUAL", xml['emit/IE'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 6.86, 7.11, 7.31, "INSC.ESTADUAL DO SUBST. TRIBUTÁRIO", xml['emit/IE_ST'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 6.84, 13.97, 7.31, "CNPJ", xml['emit/CNPJ'], {:style => :bold, :align => :center}
 
     # TITULO
     
     pdf.ititle 0.42, 10.00, 0.25, 8.16, "DESTINATÁRIO / REMETENTE"
 
-	  pdf.ibox 0.85, 12.32, 0.25, 8.58, "NOME/RAZÃO SOCIAL", xml['dest/xNome']
-	  pdf.ibox 0.85, 5.33, 12.57, 8.58, "CNPJ/CPF", xml['dest/CNPJ'] != '' ? xml['dest/CNPJ'] : xml['dest/CPF']
-	  pdf.idate 0.85, 2.92, 17.90, 8.58, "DATA DA EMISSÃO", xml['ide/dEmi'], {:align => :right}
-	  pdf.ibox 0.85, 10.16, 0.25, 9.43, "ENDEREÇO", xml['enderDest/xLgr'] + " " + xml['enderDest/nro']
-	  pdf.ibox 0.85, 4.83, 10.41, 9.43, "BAIRRO", xml['enderDest/xBairro']
-	  pdf.ibox 0.85, 2.67, 15.24, 9.43, "CEP", xml['enderDest/CEP']
-	  pdf.idate 0.85, 2.92, 17.90, 9.43, "DATA DA SAÍDA/ENTRADA", xml['ide/dSaiEnt'], {:align => :right}
-	  pdf.ibox 0.85, 7.11, 0.25, 10.28, "MUNICÍPIO", xml['enderDest/xMun']
-	  pdf.ibox 0.85, 4.06, 7.36, 10.28, "FONE/FAX", xml['enderDest/fone']
-	  pdf.ibox 0.85, 1.14, 11.42, 10.28, "UF", xml['enderDest/UF']
-	  pdf.ibox 0.85, 5.33, 12.56, 10.28, "INSCRIÇÃO ESTADUAL", xml['dest/IE']
-	  pdf.ibox 0.85, 2.92, 17.90, 10.28, "HORA DE SAÍDA", xml['ide/hSaiEnt'], {:align => :right}
+	  pdf.ibox 0.85, 12.32, 0.25, 8.58, "NOME/RAZÃO SOCIAL", xml['dest/xNome'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 5.33, 12.57, 8.58, "CNPJ/CPF", xml['dest/CNPJ'] != '' ? xml['dest/CNPJ'] : xml['dest/CPF'], {:style => :bold, :align => :center}
+	  pdf.idate 0.85, 2.92, 17.90, 8.58, "DATA DA EMISSÃO", xml['ide/dEmi'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 10.16, 0.25, 9.43, "ENDEREÇO", xml['enderDest/xLgr'] + " " + xml['enderDest/nro'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 4.83, 10.41, 9.43, "BAIRRO", xml['enderDest/xBairro'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 2.67, 15.24, 9.43, "CEP", xml['enderDest/CEP'], {:style => :bold, :align => :center}
+	  pdf.idate 0.85, 2.92, 17.90, 9.43, "DATA DA SAÍDA/ENTRADA", xml['ide/dSaiEnt'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 7.11, 0.25, 10.28, "MUNICÍPIO", xml['enderDest/xMun'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 4.06, 7.36, 10.28, "FONE/FAX", xml['enderDest/fone'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 1.14, 11.42, 10.28, "UF", xml['enderDest/UF'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 5.33, 12.56, 10.28, "INSCRIÇÃO ESTADUAL", xml['dest/IE'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 2.92, 17.90, 10.28, "HORA DE SAÍDA", xml['ide/hSaiEnt'], {:style => :bold, :align => :center}
 
     # FATURAS
     
     pdf.ititle 0.42, 10.00, 0.25, 11.12, "FATURA / DUPLICATAS"
-    pdf.ibox 0.85, 20.57, 0.25, 11.51
+    # pdf.ibox 0.85, 20.57, 0.25, 11.51
 
     faturas = xml.xml.css('cobr dup') rescue []
     if faturas.any?
       faturas.each_with_index do |fatura, index|
         # itext(x, y, text = '', info = '', options = {})
         # ibox(h, w, x, y, title = '', info = '', options = {})
-        pdf.ibox 0.85, 2.45, 2.5 * index + 0.25, 11.51
+        pdf.ibox 0.85, 2.40, 2.5 * index + 0.25, 11.51
         pdf.itext 2.5 * index + 0.30, 11.75, "Num.: #{fatura.css('nDup').text}", :size => 7
         pdf.itext 2.5 * index + 0.30, 12.00, "Venc.: #{Date.parse(fatura.css('dVenc').text).strftime('%d/%m/%Y')}", :size => 7
         pdf.itext 2.5 * index + 0.30, 12.25, "Valor.: #{fatura.css('vDup').text}", :size => 7
