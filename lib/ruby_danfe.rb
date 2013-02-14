@@ -75,7 +75,6 @@ module RubyDanfe
     end
 
     def itext(x, y, text = '', options = {})
-      # pdf.draw_text "SEM VALOR FISCAL", :at => [65,210], :size => 50
       draw_text text, {:at => [x.cm, invert(y.cm)]}.merge(options)
     end
 
@@ -294,7 +293,7 @@ module RubyDanfe
         xml.collect('det') { |det|
           [
             det.css('prod/cProd').text, #I02
-            det.css('prod/xProd').text, #I04
+            det.css('prod/xProd').text + (det.css('infAdProd').any? ? "\n" + det.css('infAdProd').text.gsub(';', "\n") : ''), #I04
             det.css('prod/NCM').text, #I05
             det.css('ICMS/*/orig').text, #N11
             det.css('prod/CFOP').text, #I08
