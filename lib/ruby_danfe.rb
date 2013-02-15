@@ -190,14 +190,14 @@ module RubyDanfe
     
     pdf.ititle 0.42, 10.00, 0.25, 8.16, "DESTINATÁRIO / REMETENTE"
 
-	  pdf.ibox 0.85, 12.32, 0.25, 8.58, "NOME/RAZÃO SOCIAL", xml['dest/xNome'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 12.32, 0.25, 8.58, "NOME/RAZÃO SOCIAL", xml['dest/xNome'], {:style => :bold, :align => :left, :size => 9}
 	  pdf.ibox 0.85, 5.33, 12.57, 8.58, "CNPJ/CPF", xml['dest/CNPJ'] != '' ? xml['dest/CNPJ'] : xml['dest/CPF'], {:style => :bold, :align => :center}
 	  pdf.idate 0.85, 2.92, 17.90, 8.58, "DATA DA EMISSÃO", xml['ide/dEmi'], {:style => :bold, :align => :center}
-	  pdf.ibox 0.85, 10.16, 0.25, 9.43, "ENDEREÇO", xml['enderDest/xLgr'] + " " + xml['enderDest/nro'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 10.16, 0.25, 9.43, "ENDEREÇO", xml['enderDest/xLgr'] + ", " + xml['enderDest/nro'] + ", " + xml['enderDest/xCpl'], {:style => :bold, :align => :left, :size => 8}
 	  pdf.ibox 0.85, 4.83, 10.41, 9.43, "BAIRRO", xml['enderDest/xBairro'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 2.67, 15.24, 9.43, "CEP", xml['enderDest/CEP'], {:style => :bold, :align => :center}
 	  pdf.idate 0.85, 2.92, 17.90, 9.43, "DATA DA SAÍDA/ENTRADA", xml['ide/dSaiEnt'], {:style => :bold, :align => :center}
-	  pdf.ibox 0.85, 7.11, 0.25, 10.28, "MUNICÍPIO", xml['enderDest/xMun'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 7.11, 0.25, 10.28, "MUNICÍPIO", xml['enderDest/xMun'], {:style => :bold, :align => :left, :size => 9}
 	  pdf.ibox 0.85, 4.06, 7.36, 10.28, "FONE/FAX", xml['enderDest/fone'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 1.14, 11.42, 10.28, "UF", xml['enderDest/UF'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 5.33, 12.56, 10.28, "INSCRIÇÃO ESTADUAL", xml['dest/IE'], {:style => :bold, :align => :center}
@@ -222,36 +222,36 @@ module RubyDanfe
 
     pdf.ititle 0.42, 5.60, 0.25, 12.36, "CÁLCULO DO IMPOSTO"
 
-  	pdf.inumeric 0.85, 4.06, 0.25, 12.78, "BASE DE CÁLCULO DO ICMS", xml['ICMSTot/vBC']
-  	pdf.inumeric 0.85, 4.06, 4.31, 12.78, "VALOR DO ICMS", xml['ICMSTot/vICMS']
-  	pdf.inumeric 0.85, 4.06, 8.37, 12.78, "BASE DE CÁLCULO DO ICMS ST", xml['ICMSTot/vBCST']
-  	pdf.inumeric 0.85, 4.06, 12.43, 12.78, "VALOR DO ICMS ST", xml['ICMSTot/vST']
-  	pdf.inumeric 0.85, 4.32, 16.49, 12.78, "VALOR TOTAL DOS PRODUTOS", xml['ICMSTot/vProd']
-	  pdf.inumeric 0.85, 3.46, 0.25, 13.63, "VALOR DO FRETE", xml['ICMSTot/vFrete']
-	  pdf.inumeric 0.85, 3.46, 3.71, 13.63, "VALOR DO SEGURO", xml['ICMSTot/vSeg']
-	  pdf.inumeric 0.85, 3.46, 7.17, 13.63, "DESCONTO", xml['ICMSTot/vDesc']
-	  pdf.inumeric 0.85, 3.46, 10.63, 13.63, "OUTRAS DESPESAS ACESSORIAS", xml['ICMSTot/vOutro']
-	  pdf.inumeric 0.85, 3.46, 14.09, 13.63, "VALOR DO IPI", xml['ICMSTot/vIPI']
+  	pdf.inumeric 0.85, 4.06, 0.25, 12.78, "BASE DE CÁLCULO DO ICMS", xml['ICMSTot/vBC'], :style => :bold
+  	pdf.inumeric 0.85, 4.06, 4.31, 12.78, "VALOR DO ICMS", xml['ICMSTot/vICMS'], :style => :bold
+  	pdf.inumeric 0.85, 4.06, 8.37, 12.78, "BASE DE CÁLCULO DO ICMS ST", xml['ICMSTot/vBCST'], :style => :bold
+  	pdf.inumeric 0.85, 4.06, 12.43, 12.78, "VALOR DO ICMS ST", xml['ICMSTot/vST'], :style => :bold
+  	pdf.inumeric 0.85, 4.32, 16.49, 12.78, "VALOR TOTAL DOS PRODUTOS", xml['ICMSTot/vProd'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 0.25, 13.63, "VALOR DO FRETE", xml['ICMSTot/vFrete'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 3.71, 13.63, "VALOR DO SEGURO", xml['ICMSTot/vSeg'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 7.17, 13.63, "DESCONTO", xml['ICMSTot/vDesc'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 10.63, 13.63, "OUTRAS DESPESAS ACESSORIAS", xml['ICMSTot/vOutro'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 14.09, 13.63, "VALOR DO IPI", xml['ICMSTot/vIPI'], :style => :bold
 	  pdf.inumeric 0.85, 3.27, 17.55, 13.63, "VALOR TOTAL DA NOTA", xml['ICMSTot/vNF'], :style => :bold
 	
     pdf.ititle 0.42, 10.00, 0.25, 14.48, "TRANSPORTADOR / VOLUMES TRANSPORTADOS"
 
-  	pdf.ibox 0.85, 9.02, 0.25, 14.90, "RAZÃO SOCIAL", xml['transporta/xNome']
-	  pdf.ibox 0.85, 2.79, 9.27, 14.90, "FRETE POR CONTA", xml['transp/modFrete'] == '0' ? ' 0 - EMITENTE' : '1 - DEST.'
-	  pdf.ibox 0.85, 1.78, 12.06, 14.90, "CODIGO ANTT", xml['veicTransp/RNTC']
-	  pdf.ibox 0.85, 2.29, 13.84, 14.90, "PLACA DO VEÍCULO", xml['veicTransp/placa']
-	  pdf.ibox 0.85, 0.76, 16.13, 14.90, "UF", xml['veicTransp/UF']
-	  pdf.ibox 0.85, 3.94, 16.89, 14.90, "CNPJ/CPF", xml['transporta/CNPJ'] 
-  	pdf.ibox 0.85, 9.02, 0.25, 15.75, "ENDEREÇO", xml['transporta/xEnder']
-  	pdf.ibox 0.85, 6.86, 9.27, 15.75, "MUNICÍPIO", xml['transporta/xMun']
-    pdf.ibox 0.85, 0.76, 16.13, 15.75, "UF", xml['transporta/UF']
-  	pdf.ibox 0.85, 3.94, 16.89, 15.75, "INSCRIÇÂO ESTADUAL", xml['transporta/IE']
-	  pdf.ibox 0.85, 2.92, 0.25, 16.60, "QUANTIDADE", xml['vol/qVol']
-	  pdf.ibox 0.85, 3.05, 3.17, 16.60, "ESPÉCIE", xml['vol/esp']
-	  pdf.ibox 0.85, 3.05, 6.22, 16.60, "MARCA", xml['vol/marca']
+  	pdf.ibox 0.85, 9.02, 0.25, 14.90, "RAZÃO SOCIAL", xml['transporta/xNome'], :style => :bold
+	  pdf.ibox 0.85, 2.79, 9.27, 14.90, "FRETE POR CONTA", xml['transp/modFrete'] == '0' ? ' 0 - EMITENTE' : '1 - DEST.', :style => :bold, :align => :center
+	  pdf.ibox 0.85, 1.78, 12.06, 14.90, "CODIGO ANTT", xml['veicTransp/RNTC'], :style => :bold
+	  pdf.ibox 0.85, 2.29, 13.84, 14.90, "PLACA DO VEÍCULO", xml['veicTransp/placa'], :style => :bold
+	  pdf.ibox 0.85, 0.76, 16.13, 14.90, "UF", xml['veicTransp/UF'], :style => :bold
+	  pdf.ibox 0.85, 3.94, 16.89, 14.90, "CNPJ/CPF", xml['transporta/CNPJ'] , :style => :bold, :align => :center
+  	pdf.ibox 0.85, 9.02, 0.25, 15.75, "ENDEREÇO", xml['transporta/xEnder'], :style => :bold
+  	pdf.ibox 0.85, 6.86, 9.27, 15.75, "MUNICÍPIO", xml['transporta/xMun'], :style => :bold, :align => :center
+    pdf.ibox 0.85, 0.76, 16.13, 15.75, "UF", xml['transporta/UF'], :style => :bold
+  	pdf.ibox 0.85, 3.94, 16.89, 15.75, "INSCRIÇÂO ESTADUAL", xml['transporta/IE'], :style => :bold, :align => :center
+	  pdf.ibox 0.85, 2.92, 0.25, 16.60, "QUANTIDADE", xml['vol/qVol'], :style => :bold, :align => :center
+	  pdf.ibox 0.85, 3.05, 3.17, 16.60, "ESPÉCIE", xml['vol/esp'], :style => :bold, :align => :center
+	  pdf.ibox 0.85, 3.05, 6.22, 16.60, "MARCA", xml['vol/marca'], :style => :bold
 	  pdf.ibox 0.85, 4.83, 9.27, 16.60, "NUMERAÇÃO"
-	  pdf.inumeric 0.85, 3.43, 14.10, 16.60, "PESO BRUTO", xml['vol/pesoB'], {:decimals => 3}
-	  pdf.inumeric 0.85, 3.30, 17.53, 16.60, "PESO LÍQUIDO", xml['vol/pesoL'], {:decimals => 3}
+	  pdf.inumeric 0.85, 3.43, 14.10, 16.60, "PESO BRUTO", xml['vol/pesoB'], {:decimals => 3, :style => :bold}
+	  pdf.inumeric 0.85, 3.30, 17.53, 16.60, "PESO LÍQUIDO", xml['vol/pesoL'], {:decimals => 3, :style => :bold}
 
     pdf.ititle 0.42, 10.00, 0.25, 17.45, "DADOS DO PRODUTO / SERVIÇO"
 
