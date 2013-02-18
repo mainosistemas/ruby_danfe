@@ -53,6 +53,9 @@ module RubyDanfe
     def chave_nfe
       self['chNFe'].present? ? self['chNFe'] : @xml.css('infNFe').first.attr('Id').gsub(/\D/, '')
     end
+    def cpf_cnpj
+      ['dest/CNPJ'] != '' ? self['dest/CNPJ'].insert(12, '-').insert(8, '/').insert(5, '.').insert(2, '.') : self['dest/CPF'].insert(9, '-').insert(6, '.').insert(3, '.')
+    end
   end
   
   class Document < Prawn::Document
@@ -97,7 +100,7 @@ module RubyDanfe
       }.merge(options)
       self.stroke_rectangle at, w, h if options[:border] == 1
       self.text_box title, :size => 6, :at => [at[0] + 2, at[1] - 2], :width => w - 4, :height => 8 if title != ''
-      self.text_box info, :size => options[:size], :at => [at[0] + 2, at[1] - (title != '' ? 14 : 4) ], :width => w - 4, :height => h - (title != '' ? 14 : 4), :align => options[:align], :style => options[:style], :valign => options[:valign]
+      self.formatted_text_box Parser.to_array(info), :size => options[:size], :at => [at[0] + 2, at[1] - (title != '' ? 14 : 4) ], :width => w - 4, :height => h - (title != '' ? 14 : 4), :align => options[:align], :style => options[:style], :valign => options[:valign], :inline_format => options[:inline_format]
     end
     
     def inumeric(h, w, x, y, title = '', info = '', options = {})
@@ -157,12 +160,13 @@ module RubyDanfe
       valign = :bottom
     end
 
+
     pdf.ibox 3.92, 7.46, 0.25, 2.54, '',
-      xml['emit/xNome'] + "\n" +
+      "<b><font size='10'>#{xml['emit/xNome']}</font></b>" + "\n" +
       xml['enderEmit/xLgr'] + ", " + xml['enderEmit/nro'] + ", " + xml['enderEmit/xCpl'] + "\n" + 
-      xml['enderEmit/xBairro'] + " - " + xml['enderEmit/CEP'] + "\n" +
-      xml['enderEmit/xMun'] + "/" + xml['enderEmit/UF'] + "\n" +
-      xml['enderEmit/fone'] + " " + xml['enderEmit/email'], {:align => :center, :valign => valign}
+      xml['enderEmit/xBairro'] + " - " + xml['enderEmit/CEP'].insert(5, '-').insert(2, '.') + "\n" +
+      xml['enderEmit/xMun'] + " - " + xml['enderEmit/UF'] +
+      " Fone/Fax: " + xml['enderEmit/fone'].insert(6, '-').insert(2, ') ').insert(0, '(') + " " + xml['enderEmit/email'], {:align => :center, :valign => valign, :size => 8, :inline_format => true}
 
 
     pdf.ibox 3.92, 3.08, 7.71, 2.54
@@ -184,14 +188,14 @@ module RubyDanfe
 
 	  pdf.ibox 0.85, 6.86, 0.25, 7.31, "INSCRIÇÃO ESTADUAL", xml['emit/IE'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 6.86, 7.11, 7.31, "INSC.ESTADUAL DO SUBST. TRIBUTÁRIO", xml['emit/IE_ST'], {:style => :bold, :align => :center}
-	  pdf.ibox 0.85, 6.84, 13.97, 7.31, "CNPJ", xml['emit/CNPJ'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 6.84, 13.97, 7.31, "CNPJ", xml['emit/CNPJ'].insert(12, '-').insert(8, '/').insert(5, '.').insert(2, '.'), {:style => :bold, :align => :center}
 
     # TITULO
     
     pdf.ititle 0.42, 10.00, 0.25, 8.16, "DESTINATÁRIO / REMETENTE"
 
 	  pdf.ibox 0.85, 12.32, 0.25, 8.58, "NOME/RAZÃO SOCIAL", xml['dest/xNome'], {:style => :bold, :align => :left, :size => 9}
-	  pdf.ibox 0.85, 5.33, 12.57, 8.58, "CNPJ/CPF", xml['dest/CNPJ'] != '' ? xml['dest/CNPJ'] : xml['dest/CPF'], {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 5.33, 12.57, 8.58, "CNPJ/CPF", xml.cpf_cnpj, {:style => :bold, :align => :center}
 	  pdf.idate 0.85, 2.92, 17.90, 8.58, "DATA DA EMISSÃO", xml['ide/dEmi'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 10.16, 0.25, 9.43, "ENDEREÇO", xml['enderDest/xLgr'] + ", " + xml['enderDest/nro'] + ", " + xml['enderDest/xCpl'], {:style => :bold, :align => :left, :size => 8}
 	  pdf.ibox 0.85, 4.83, 10.41, 9.43, "BAIRRO", xml['enderDest/xBairro'], {:style => :bold, :align => :center}
