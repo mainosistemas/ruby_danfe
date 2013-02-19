@@ -184,7 +184,7 @@ module RubyDanfe
     pdf.ibox 0.85, 10.02, 10.79, 4.74, "CHAVE DE ACESSO", xml.chave_nfe.gsub(/(\d)(?=(\d\d\d\d)+(?!\d))/, "\\1 "), {:style => :bold, :align => :center}
     pdf.ibox 0.85, 10.02, 10.79, 5.60 , '', "Consulta de autenticidade no portal nacional da NF-e\nwww.nfe.fazenda.gov.br/portal ou no site da Sefaz Autorizadora", {:align => :center, :size => 8}
 	  pdf.ibox 0.85, 10.54, 0.25, 6.46, "NATUREZA DA OPERAÇÃO", xml['ide/natOp'], {:style => :bold, :align => :center}
-	  pdf.ibox 0.85, 10.02, 10.79, 6.46, "PROTOCOLO DE AUTORIZAÇÃO DE USO", xml['infProt/nProt'] + ' ' + xml['infProt/dhRecbto'], {:align => :center}
+	  pdf.ibox 0.85, 10.02, 10.79, 6.46, "PROTOCOLO DE AUTORIZAÇÃO DE USO", xml['infProt/nProt'] + ' - ' + (xml['infProt/dhRecbto'].present? ? DateTime.parse(x).strftime('%d/%m/%Y %H:%M:%S') : ''), {:align => :center, :style => :bold}
 
 	  pdf.ibox 0.85, 6.86, 0.25, 7.31, "INSCRIÇÃO ESTADUAL", xml['emit/IE'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 6.86, 7.11, 7.31, "INSC.ESTADUAL DO SUBST. TRIBUTÁRIO", xml['emit/IE_ST'], {:style => :bold, :align => :center}
@@ -262,7 +262,7 @@ module RubyDanfe
     pdf.ibox 6.77, 2.00, 0.25, 17.87, "CÓDIGO"
     pdf.ibox 6.77, 4.50, 2.25, 17.87, "DESCRIÇÃO"
     pdf.ibox 6.77, 1.50, 6.75, 17.87, "NCM"
-    pdf.ibox 6.77, 0.80, 8.25, 17.87, "CST"
+    pdf.ibox 6.77, 0.80, 8.25, 17.87, "O/CST"
     pdf.ibox 6.77, 1.00, 9.05, 17.87, "CFOP"
     pdf.ibox 6.77, 1.00, 10.05, 17.87, "UNID"
     pdf.ibox 6.77, 1.50, 11.05, 17.87, "QUANT"
@@ -291,7 +291,6 @@ module RubyDanfe
 
     end
 
-    
     pdf.font_size(6) do
       pdf.itable 6.37, 21.50, 0.25, 18.17, 
         xml.collect('det') { |det|
@@ -299,7 +298,7 @@ module RubyDanfe
             det.css('prod/cProd').text, #I02
             det.css('prod/xProd').text + (det.css('infAdProd').any? ? "\n" + det.css('infAdProd').text.gsub(';', "\n") : ''), #I04
             det.css('prod/NCM').text, #I05
-            det.css('ICMS/*/orig').text, #N11
+            det.css('ICMS/*/orig').text + det.css('ICMS/*/CST').text + det.css('ICMS/*/CSOSN').text, #N11
             det.css('prod/CFOP').text, #I08
             det.css('prod/uCom').text, #I09
             numerify(det.css('prod/qCom').text), #I10 
