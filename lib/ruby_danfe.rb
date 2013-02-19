@@ -54,7 +54,7 @@ module RubyDanfe
       self['chNFe'].present? ? self['chNFe'] : @xml.css('infNFe').first.attr('Id').gsub(/\D/, '')
     end
     def cpf_cnpj
-      ['dest/CNPJ'] != '' ? self['dest/CNPJ'].insert(12, '-').insert(8, '/').insert(5, '.').insert(2, '.') : self['dest/CPF'].insert(9, '-').insert(6, '.').insert(3, '.')
+      self['dest/CNPJ'].present? ? self['dest/CNPJ'].insert(12, '-').insert(8, '/').insert(5, '.').insert(2, '.') : self['dest/CPF'].insert(9, '-').insert(6, '.').insert(3, '.')
     end
   end
   
