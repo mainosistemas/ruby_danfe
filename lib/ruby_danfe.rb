@@ -184,7 +184,7 @@ module RubyDanfe
     pdf.ibox 0.85, 10.02, 10.79, 4.74, "CHAVE DE ACESSO", xml.chave_nfe.gsub(/(\d)(?=(\d\d\d\d)+(?!\d))/, "\\1 "), {:style => :bold, :align => :center}
     pdf.ibox 0.85, 10.02, 10.79, 5.60 , '', "Consulta de autenticidade no portal nacional da NF-e\nwww.nfe.fazenda.gov.br/portal ou no site da Sefaz Autorizadora", {:align => :center, :size => 8}
 	  pdf.ibox 0.85, 10.54, 0.25, 6.46, "NATUREZA DA OPERAÇÃO", xml['ide/natOp'], {:style => :bold, :align => :center}
-	  pdf.ibox 0.85, 10.02, 10.79, 6.46, "PROTOCOLO DE AUTORIZAÇÃO DE USO", xml['infProt/nProt'] + ' - ' + (xml['infProt/dhRecbto'].present? ? DateTime.parse(x).strftime('%d/%m/%Y %H:%M:%S') : ''), {:align => :center, :style => :bold}
+	  pdf.ibox 0.85, 10.02, 10.79, 6.46, "PROTOCOLO DE AUTORIZAÇÃO DE USO", xml['infProt/nProt'] + ' - ' + (xml['infProt/dhRecbto'].present? ? DateTime.parse(xml['infProt/dhRecbto']).strftime('%d/%m/%Y %H:%M:%S') : ''), {:align => :center, :style => :bold}
 
 	  pdf.ibox 0.85, 6.86, 0.25, 7.31, "INSCRIÇÃO ESTADUAL", xml['emit/IE'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 6.86, 7.11, 7.31, "INSC.ESTADUAL DO SUBST. TRIBUTÁRIO", xml['emit/IE_ST'], {:style => :bold, :align => :center}
