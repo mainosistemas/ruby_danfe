@@ -3,6 +3,7 @@ PATH
   specs:
     ruby_danfe (0.10.0)
       barby
+      burocracias (>= 0.0.3)
       nokogiri
       prawn
 
@@ -12,10 +13,11 @@ GEM
     Ascii85 (1.0.2)
     afm (0.2.0)
     barby (0.5.0)
+    burocracias (0.0.3)
     diff-lcs (1.1.3)
     hashery (2.1.0)
     nokogiri (1.5.6)
-    pdf-reader (1.3.1)
+    pdf-reader (1.3.2)
       Ascii85 (~> 1.0.0)
       afm (~> 0.2.0)
       hashery (~> 2.0)

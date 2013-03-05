@@ -6,6 +6,7 @@ require 'barby'
 require 'barby/barcode/code_128'
 require 'barby/outputter/prawn_outputter'
 require 'nokogiri'
+require 'burocracias'
 
 def numerify(number, decimals = 2)
   return '' if !number || number == ''
@@ -55,7 +56,7 @@ module RubyDanfe
     end
     def cpf_cnpj
       # self['dest/CNPJ'].present? ? self['dest/CNPJ'].insert(12, '-').insert(8, '/').insert(5, '.').insert(2, '.') : self['dest/CPF'].insert(9, '-').insert(6, '.').insert(3, '.')
-      self['dest/CNPJ'] != '' ? self['dest/CNPJ'] : self['dest/CPF']
+      self['dest/CNPJ'] != '' ? self['dest/CNPJ'].as_cnpj : self['dest/CPF'].as_cpf
     end
   end
   
@@ -165,9 +166,9 @@ module RubyDanfe
     pdf.ibox 3.92, 7.46, 0.25, 2.54, '',
       "<b><font size='10'>#{xml['emit/xNome']}</font></b>" + "\n" +
       xml['enderEmit/xLgr'] + ", " + xml['enderEmit/nro'] + ", " + xml['enderEmit/xCpl'] + "\n" + 
-      xml['enderEmit/xBairro'] + " - " + xml['enderEmit/CEP'].insert(5, '-').insert(2, '.') + "\n" +
+      xml['enderEmit/xBairro'] + " - " + xml['enderEmit/CEP'].as_cep + "\n" +
       xml['enderEmit/xMun'] + " - " + xml['enderEmit/UF'] +
-      (xml['enderEmit/fone'].present? ? " Fone/Fax: " + xml['enderEmit/fone'].insert(6, '-').insert(2, ') ').insert(0, '(') : '') + " " + xml['enderEmit/email'], {:align => :center, :valign => valign, :size => 8, :inline_format => true}
+      (xml['enderEmit/fone'].present? ? " Fone/Fax: " + xml['enderEmit/fone'].as_phone_number : '') + " " + xml['enderEmit/email'], {:align => :center, :valign => valign, :size => 8, :inline_format => true}
 
 
     pdf.ibox 3.92, 3.08, 7.71, 2.54
@@ -189,7 +190,7 @@ module RubyDanfe
 
 	  pdf.ibox 0.85, 6.86, 0.25, 7.31, "INSCRIÇÃO ESTADUAL", xml['emit/IE'], {:style => :bold, :align => :center}
 	  pdf.ibox 0.85, 6.86, 7.11, 7.31, "INSC.ESTADUAL DO SUBST. TRIBUTÁRIO", xml['emit/IE_ST'], {:style => :bold, :align => :center}
-	  pdf.ibox 0.85, 6.84, 13.97, 7.31, "CNPJ", (xml['emit/CNPJ'].present? ? xml['emit/CNPJ'].insert(12, '-').insert(8, '/').insert(5, '.').insert(2, '.') : ''), {:style => :bold, :align => :center}
+	  pdf.ibox 0.85, 6.84, 13.97, 7.31, "CNPJ", (xml['emit/CNPJ'].present? ? xml['emit/CNPJ'].as_cnpj : ''), {:style => :bold, :align => :center}
 
     # TITULO
     
