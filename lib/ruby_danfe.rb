@@ -60,8 +60,9 @@ module RubyDanfe
   end
   
   class Document < Prawn::Document
-  
-       
+
+    attr_accessor :voffset, :hprodutos
+
     def ititle(h, w, x, y, title)
       self.text_box title, :size => 10, :at => [x.cm, invert(y.cm) - 2], :width => w.cm, :height => h.cm, :style => :bold
     end
@@ -95,6 +96,8 @@ module RubyDanfe
       options = {
         :align => :left,
         :size => 10,
+        :min_font_size => 8,
+        :overflow => :shrink_to_fit,
         :style => nil,
         :valign => :top,
         :border => 1
@@ -133,6 +136,7 @@ module RubyDanfe
       :top_margin => 0,
       :botton_margin => 0
     )
+    pdf.voffset = -1.27
  
     pdf.font "Times-Roman" # Official font   
     
@@ -209,12 +213,10 @@ module RubyDanfe
 	  pdf.ibox 0.85, 2.92, 17.90, 10.28, "HORA DE SAÍDA", xml['ide/hSaiEnt'], {:style => :bold, :align => :center}
 
     # FATURAS
-    
-    pdf.ititle 0.42, 10.00, 0.25, 11.12, "FATURA / DUPLICATAS"
-    # pdf.ibox 0.85, 20.57, 0.25, 11.51
-
     faturas = xml.xml.css('cobr dup') rescue []
     if faturas.any?
+      pdf.voffset = 0
+      pdf.ititle 0.42, 10.00, 0.25, 11.12, "FATURA / DUPLICATAS"
       faturas.each_with_index do |fatura, index|
         # itext(x, y, text = '', info = '', options = {})
         # ibox(h, w, x, y, title = '', info = '', options = {})
@@ -225,75 +227,88 @@ module RubyDanfe
       end
     end
 
-    pdf.ititle 0.42, 5.60, 0.25, 12.36, "CÁLCULO DO IMPOSTO"
+    pdf.ititle 0.42, 5.60, 0.25, 12.36 + pdf.voffset, "CÁLCULO DO IMPOSTO"
 
-  	pdf.inumeric 0.85, 4.06, 0.25, 12.78, "BASE DE CÁLCULO DO ICMS", xml['ICMSTot/vBC'], :style => :bold
-  	pdf.inumeric 0.85, 4.06, 4.31, 12.78, "VALOR DO ICMS", xml['ICMSTot/vICMS'], :style => :bold
-  	pdf.inumeric 0.85, 4.06, 8.37, 12.78, "BASE DE CÁLCULO DO ICMS ST", xml['ICMSTot/vBCST'], :style => :bold
-  	pdf.inumeric 0.85, 4.06, 12.43, 12.78, "VALOR DO ICMS ST", xml['ICMSTot/vST'], :style => :bold
-  	pdf.inumeric 0.85, 4.32, 16.49, 12.78, "VALOR TOTAL DOS PRODUTOS", xml['ICMSTot/vProd'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 0.25, 13.63, "VALOR DO FRETE", xml['ICMSTot/vFrete'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 3.71, 13.63, "VALOR DO SEGURO", xml['ICMSTot/vSeg'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 7.17, 13.63, "DESCONTO", xml['ICMSTot/vDesc'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 10.63, 13.63, "OUTRAS DESPESAS ACESSORIAS", xml['ICMSTot/vOutro'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 14.09, 13.63, "VALOR DO IPI", xml['ICMSTot/vIPI'], :style => :bold
-	  pdf.inumeric 0.85, 3.27, 17.55, 13.63, "VALOR TOTAL DA NOTA", xml['ICMSTot/vNF'], :style => :bold
+  	pdf.inumeric 0.85, 4.06, 0.25, 12.78 + pdf.voffset, "BASE DE CÁLCULO DO ICMS", xml['ICMSTot/vBC'], :style => :bold
+  	pdf.inumeric 0.85, 4.06, 4.31, 12.78 + pdf.voffset, "VALOR DO ICMS", xml['ICMSTot/vICMS'], :style => :bold
+  	pdf.inumeric 0.85, 4.06, 8.37, 12.78 + pdf.voffset, "BASE DE CÁLCULO DO ICMS ST", xml['ICMSTot/vBCST'], :style => :bold
+  	pdf.inumeric 0.85, 4.06, 12.43, 12.78 + pdf.voffset, "VALOR DO ICMS ST", xml['ICMSTot/vST'], :style => :bold
+  	pdf.inumeric 0.85, 4.32, 16.49, 12.78 + pdf.voffset, "VALOR TOTAL DOS PRODUTOS", xml['ICMSTot/vProd'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 0.25, 13.63 + pdf.voffset, "VALOR DO FRETE", xml['ICMSTot/vFrete'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 3.71, 13.63 + pdf.voffset, "VALOR DO SEGURO", xml['ICMSTot/vSeg'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 7.17, 13.63 + pdf.voffset, "DESCONTO", xml['ICMSTot/vDesc'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 10.63, 13.63 + pdf.voffset, "OUTRAS DESPESAS ACESSORIAS", xml['ICMSTot/vOutro'], :style => :bold
+	  pdf.inumeric 0.85, 3.46, 14.09, 13.63 + pdf.voffset, "VALOR DO IPI", xml['ICMSTot/vIPI'], :style => :bold
+	  pdf.inumeric 0.85, 3.27, 17.55, 13.63 + pdf.voffset, "VALOR TOTAL DA NOTA", xml['ICMSTot/vNF'], :style => :bold
 	
-    pdf.ititle 0.42, 10.00, 0.25, 14.48, "TRANSPORTADOR / VOLUMES TRANSPORTADOS"
+    pdf.ititle 0.42, 10.00, 0.25, 14.48 + pdf.voffset, "TRANSPORTADOR / VOLUMES TRANSPORTADOS"
 
-  	pdf.ibox 0.85, 9.02, 0.25, 14.90, "RAZÃO SOCIAL", xml['transporta/xNome'], :style => :bold
-	  pdf.ibox 0.85, 2.79, 9.27, 14.90, "FRETE POR CONTA", xml['transp/modFrete'] == '0' ? ' 0 - EMITENTE' : '1 - DEST.', :style => :bold, :align => :center
-	  pdf.ibox 0.85, 1.78, 12.06, 14.90, "CODIGO ANTT", xml['veicTransp/RNTC'], :style => :bold
-	  pdf.ibox 0.85, 2.29, 13.84, 14.90, "PLACA DO VEÍCULO", xml['veicTransp/placa'], :style => :bold
-	  pdf.ibox 0.85, 0.76, 16.13, 14.90, "UF", xml['veicTransp/UF'], :style => :bold
-	  pdf.ibox 0.85, 3.94, 16.89, 14.90, "CNPJ/CPF", xml['transporta/CNPJ'] , :style => :bold, :align => :center
-  	pdf.ibox 0.85, 9.02, 0.25, 15.75, "ENDEREÇO", xml['transporta/xEnder'], :style => :bold
-  	pdf.ibox 0.85, 6.86, 9.27, 15.75, "MUNICÍPIO", xml['transporta/xMun'], :style => :bold, :align => :center
-    pdf.ibox 0.85, 0.76, 16.13, 15.75, "UF", xml['transporta/UF'], :style => :bold
-  	pdf.ibox 0.85, 3.94, 16.89, 15.75, "INSCRIÇÂO ESTADUAL", xml['transporta/IE'], :style => :bold, :align => :center
-	  pdf.ibox 0.85, 2.92, 0.25, 16.60, "QUANTIDADE", xml['vol/qVol'], :style => :bold, :align => :center
-	  pdf.ibox 0.85, 3.05, 3.17, 16.60, "ESPÉCIE", xml['vol/esp'], :style => :bold, :align => :center
-	  pdf.ibox 0.85, 3.05, 6.22, 16.60, "MARCA", xml['vol/marca'], :style => :bold
-	  pdf.ibox 0.85, 4.83, 9.27, 16.60, "NUMERAÇÃO"
-	  pdf.inumeric 0.85, 3.43, 14.10, 16.60, "PESO BRUTO", xml['vol/pesoB'], {:decimals => 3, :style => :bold}
-	  pdf.inumeric 0.85, 3.30, 17.53, 16.60, "PESO LÍQUIDO", xml['vol/pesoL'], {:decimals => 3, :style => :bold}
+  	pdf.ibox 0.85, 9.02, 0.25, 14.90 + pdf.voffset, "RAZÃO SOCIAL", xml['transporta/xNome'], :style => :bold
+	  pdf.ibox 0.85, 2.79, 9.27, 14.90 + pdf.voffset, "FRETE POR CONTA", xml['transp/modFrete'] == '0' ? ' 0 - EMITENTE' : '1 - DEST.', :style => :bold, :align => :center
+	  pdf.ibox 0.85, 1.78, 12.06, 14.90 + pdf.voffset, "CODIGO ANTT", xml['veicTransp/RNTC'], :style => :bold
+	  pdf.ibox 0.85, 2.29, 13.84, 14.90 + pdf.voffset, "PLACA DO VEÍCULO", xml['veicTransp/placa'], :style => :bold
+	  pdf.ibox 0.85, 0.76, 16.13, 14.90 + pdf.voffset, "UF", xml['veicTransp/UF'], :style => :bold
+	  pdf.ibox 0.85, 3.94, 16.89, 14.90 + pdf.voffset, "CNPJ/CPF", xml['transporta/CNPJ'] , :style => :bold, :align => :center
+  	pdf.ibox 0.85, 9.02, 0.25, 15.75 + pdf.voffset, "ENDEREÇO", xml['transporta/xEnder'], :style => :bold
+  	pdf.ibox 0.85, 6.86, 9.27, 15.75 + pdf.voffset, "MUNICÍPIO", xml['transporta/xMun'], :style => :bold, :align => :center
+    pdf.ibox 0.85, 0.76, 16.13, 15.75 + pdf.voffset, "UF", xml['transporta/UF'], :style => :bold
+  	pdf.ibox 0.85, 3.94, 16.89, 15.75 + pdf.voffset, "INSCRIÇÂO ESTADUAL", xml['transporta/IE'], :style => :bold, :align => :center
+	  pdf.ibox 0.85, 2.92, 0.25, 16.60 + pdf.voffset, "QUANTIDADE", xml['vol/qVol'], :style => :bold, :align => :center
+	  pdf.ibox 0.85, 3.05, 3.17, 16.60 + pdf.voffset, "ESPÉCIE", xml['vol/esp'], :style => :bold, :align => :center
+	  pdf.ibox 0.85, 3.05, 6.22, 16.60 + pdf.voffset, "MARCA", xml['vol/marca'], :style => :bold
+	  pdf.ibox 0.85, 4.83, 9.27, 16.60 + pdf.voffset, "NUMERAÇÃO"
+	  pdf.inumeric 0.85, 3.43, 14.10, 16.60 + pdf.voffset, "PESO BRUTO", xml['vol/pesoB'], {:decimals => 3, :style => :bold}
+	  pdf.inumeric 0.85, 3.30, 17.53, 16.60 + pdf.voffset, "PESO LÍQUIDO", xml['vol/pesoL'], {:decimals => 3, :style => :bold}
 
-    pdf.ititle 0.42, 10.00, 0.25, 17.45, "DADOS DO PRODUTO / SERVIÇO"
+    pdf.ititle 0.42, 10.00, 0.25, 17.45 + pdf.voffset, "DADOS DOS PRODUTOS / SERVIÇOS"
 
-    pdf.ibox 6.77, 2.00, 0.25, 17.87, "CÓDIGO"
-    pdf.ibox 6.77, 4.50, 2.25, 17.87, "DESCRIÇÃO"
-    pdf.ibox 6.77, 1.50, 6.75, 17.87, "NCM"
-    pdf.ibox 6.77, 0.80, 8.25, 17.87, "O/CST"
-    pdf.ibox 6.77, 1.00, 9.05, 17.87, "CFOP"
-    pdf.ibox 6.77, 1.00, 10.05, 17.87, "UNID"
-    pdf.ibox 6.77, 1.50, 11.05, 17.87, "QUANT"
-    pdf.ibox 6.77, 1.50, 12.55, 17.87, "VALOR UNIT"
-    pdf.ibox 6.77, 1.50, 14.05, 17.87, "VALOR TOT"
-    pdf.ibox 6.77, 1.50, 15.55, 17.87, "BASE CÁLC"
-    pdf.ibox 6.77, 1.00, 17.05, 17.87, "VL ICMS"
-    pdf.ibox 6.77, 1.00, 18.05, 17.87, "VL IPI"
-    pdf.ibox 6.77, 0.90, 19.05, 17.87, "% ICMS"
-    pdf.ibox 6.77, 0.86, 19.95, 17.87, "% IPI"
+    pdf.hprodutos = 6.77
 
-    pdf.horizontal_line 0.25.cm, 21.50.cm, :at => invert(18.17.cm)
+    if xml['total/ISSTot'] == ''
+      pdf.hprodutos += 3.82
+    end
+
+    pdf.ibox pdf.hprodutos, 2.10, 0.25, 17.87 + pdf.voffset, "CÓDIGO PRODUTOS", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 5.86, 2.35, 17.87 + pdf.voffset, "DESCRIÇÃO DO PRODUTO / SERVIÇO", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 1.10, 8.21, 17.87 + pdf.voffset, "NCM/SH", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 0.80, 9.31, 17.87 + pdf.voffset, "O/CST", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 0.80, 10.11, 17.87 + pdf.voffset, "CFOP", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 0.70, 10.91, 17.87 + pdf.voffset, "UN", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 1.20, 11.61, 17.87 + pdf.voffset, "QUANT", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 1.20, 12.81, 17.87 + pdf.voffset, "VALOR UNIT", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 1.50, 14.01, 17.87 + pdf.voffset, "VALOR TOT", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 1.50, 15.51, 17.87 + pdf.voffset, "BASE CÁLC", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 1.00, 17.01, 17.87 + pdf.voffset, "VL ICMS", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 1.00, 18.01, 17.87 + pdf.voffset, "VL IPI", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 0.90, 19.01, 17.87 + pdf.voffset, "% ICMS", '', {:align => :center}
+    pdf.ibox pdf.hprodutos, 0.90, 19.91, 17.87 + pdf.voffset, "% IPI", '', {:align => :center}
+
+    pdf.horizontal_line 0.25.cm, 20.80.cm, :at => invert((18.17 + pdf.voffset).cm)
 	  
-    pdf.ititle 0.42, 10.00, 0.25, 24.64, "CÁLCULO DO ISSQN"
+    if xml['total/ISSTot'] != ''
+      pdf.ititle 0.42, 10.00, 0.25, 24.64 + pdf.voffset, "CÁLCULO DO ISSQN"
 
-	  pdf.ibox 0.85, 5.08, 0.25, 25.06, "INSCRIÇÃO MUNICIPAL", xml['emit/IM']
-	  pdf.ibox 0.85, 5.08, 5.33, 25.06, "VALOR TOTAL DOS SERVIÇOS", xml['total/vServ']
-	  pdf.ibox 0.85, 5.08, 10.41, 25.06, "BASE DE CÁLCULO DO ISSQN", xml['total/vBCISS']
-	  pdf.ibox 0.85, 5.28, 15.49, 25.06, "VALOR DO ISSQN", xml['total/ISSTot']
+  	  pdf.ibox 0.85, 5.08, 0.25, 25.06 + pdf.voffset, "INSCRIÇÃO MUNICIPAL", xml['emit/IM']
+  	  pdf.ibox 0.85, 5.08, 5.33, 25.06 + pdf.voffset, "VALOR TOTAL DOS SERVIÇOS", xml['total/vServ']
+  	  pdf.ibox 0.85, 5.08, 10.41, 25.06 + pdf.voffset, "BASE DE CÁLCULO DO ISSQN", xml['total/vBCISS']
+  	  pdf.ibox 0.85, 5.28, 15.49, 25.06 + pdf.voffset, "VALOR DO ISSQN", xml['total/ISSTot']
+    else
+      pdf.voffset += 2.55
+    end
 
-    pdf.ititle 0.42, 10.00, 0.25, 25.91, "DADOS ADICIONAIS"
+    pdf.ititle 0.42, 10.00, 0.25, 25.91 + pdf.voffset, "DADOS ADICIONAIS"
 
-	  pdf.ibox 3.07, 12.93, 0.25, 26.33, "INFORMAÇÕES COMPLEMENTARES", xml['infAdic/infCpl'], {:size => 8, :valign => :top}
-	  
-	  pdf.ibox 3.07, 7.62, 13.17, 26.33, "RESERVADO AO FISCO"
+    # valor anterior: 3.07
+    pdf.ibox 1.30, 12.93, 0.25, 26.33 + pdf.voffset, "INFORMAÇÕES COMPLEMENTARES", xml['infAdic/infCpl'], {:size => 8, :valign => :top}
+    
+    pdf.ibox 1.30, 7.62, 13.17, 26.33 + pdf.voffset, "RESERVADO AO FISCO"
 
     end
 
+
+    # PRODUTOS
     pdf.font_size(6) do
-      pdf.itable 6.37, 21.50, 0.25, 18.17, 
+      pdf.itable pdf.hprodutos - 0.40, 21.50, 0.25, 18.17 + pdf.voffset, 
         xml.collect('det') { |det|
           [
             det.css('prod/cProd').text, #I02
@@ -313,23 +328,23 @@ module RubyDanfe
           ]
         },
         :column_widths => {
-          0 => 2.00.cm, 
-          1 => 4.50.cm,
-          2 => 1.50.cm,
+          0 => 2.10.cm, 
+          1 => 5.86.cm,
+          2 => 1.10.cm,
           3 => 0.80.cm,
-          4 => 1.00.cm,
-          5 => 1.00.cm,
-          6 => 1.50.cm,
-          7 => 1.50.cm,
+          4 => 0.80.cm,
+          5 => 0.70.cm,
+          6 => 1.20.cm,
+          7 => 1.20.cm,
           8 => 1.50.cm,
           9 => 1.50.cm,
           10 => 1.00.cm,
           11 => 1.00.cm,
           12 => 0.90.cm,
-          13 => 0.86.cm
+          13 => 0.90.cm
         },
         :cell_style => {:padding => 2, :border_width => 0} do |table|
-          pdf.dash(5);
+          pdf.dash(4);
           table.column(6..13).style(:align => :right)
           table.column(0..13).border_width = 1
           table.column(0..13).borders = [:bottom]
