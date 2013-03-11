@@ -144,6 +144,7 @@ module RubyDanfe
     pdf.voffset_pos = 0
     pdf.hprodutos = 6.77
     pdf.voffset_fp = 8
+    pdf.software = "Emitido por Maino Sistemas (www.maino.com.br) - Maino Comex NF-e (www.comexnfe.com.br)"
  
     pdf.font "Times-Roman" # Official font
 
@@ -376,7 +377,7 @@ module RubyDanfe
       
       pdf.ibox 1.30, 7.62, 13.17, 26.33 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
 
-      pdf.itext 0.25, 28.7, pdf.software, :size => 7
+      pdf.itext 0.25, 29.7, pdf.software, :size => 7
 
     end
 
