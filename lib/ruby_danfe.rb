@@ -139,8 +139,55 @@ module RubyDanfe
     )
     pdf.voffset = -1.27
     pdf.voffset_pos = 0
+    pdf.hprodutos = 6.77
  
-    pdf.font "Times-Roman" # Official font   
+    pdf.font "Times-Roman" # Official font
+
+    # PRODUTOS
+    pdf.font_size(6) do
+      pdf.itable pdf.hprodutos - 0.40, 21.50, 0.25, 18.17 + pdf.voffset, 
+        xml.collect('det') { |det|
+          [
+            det.css('prod/cProd').text, #I02
+            det.css('prod/xProd').text + (det.css('infAdProd').any? ? "\n" + det.css('infAdProd').text.gsub(';', "\n") : ''), #I04
+            det.css('prod/NCM').text, #I05
+            det.css('ICMS/*/orig').text + det.css('ICMS/*/CST').text + det.css('ICMS/*/CSOSN').text, #N11
+            det.css('prod/CFOP').text, #I08
+            det.css('prod/uCom').text, #I09
+            numerify(det.css('prod/qCom').text), #I10 
+            numerify(det.css('prod/vUnCom').text), #I10a
+            numerify(det.css('prod/vProd').text), #I11
+            numerify(det.css('ICMS/*/vBC').text), #N15
+            numerify(det.css('ICMS/*/vICMS').text), #N17   
+            numerify(det.css('IPI/*/vIPI').text), #O14
+            numerify(det.css('ICMS/*/pICMS').text), #N16
+            numerify(det.css('IPI/*/pIPI').text) #O13 
+          ]
+        },
+        :column_widths => {
+          0 => 2.10.cm, 
+          1 => 5.86.cm,
+          2 => 1.10.cm,
+          3 => 0.80.cm,
+          4 => 0.80.cm,
+          5 => 0.70.cm,
+          6 => 1.20.cm,
+          7 => 1.20.cm,
+          8 => 1.50.cm,
+          9 => 1.50.cm,
+          10 => 1.00.cm,
+          11 => 1.00.cm,
+          12 => 0.90.cm,
+          13 => 0.90.cm
+        },
+        :cell_style => {:padding => 2, :border_width => 0} do |table|
+          # pdf.dash(4)
+          table.column(6..13).style(:align => :right)
+          table.column(0..13).border_width = 1
+          table.column(0..13).borders = []
+          # pdf.undash
+        end
+    end
     
     pdf.repeat :all do
     
@@ -267,16 +314,23 @@ module RubyDanfe
 	  pdf.inumeric 0.85, 3.30, 17.53, 16.60 + pdf.voffset, "PESO LÍQUIDO", xml['vol/pesoL'], {:decimals => 3, :style => :bold}
 
 
+    # Aumenta o espaço de produtos se não houver informações de ISS
+    if xml['total/ISSTot'] == ''
+      pdf.hprodutos += 3.82
+      pdf.voffset_pos += 2.55
+    end
+
     # Produtos
-    pdf.repeat :all do
+    pdf.page_count.times do |i|
+      pdf.go_to_page(i + 1)
+
+      if i == 1
+        pdf.hprodutos += 8
+        pdf.voffset_pos += 8
+        pdf.voffset -= 8
+      end
 
       pdf.ititle 0.42, 10.00, 0.25, 17.45 + pdf.voffset, "DADOS DOS PRODUTOS / SERVIÇOS"
-
-      pdf.hprodutos = 6.77
-
-      if xml['total/ISSTot'] == ''
-        pdf.hprodutos += 3.82
-      end
 
       pdf.ibox pdf.hprodutos, 2.10, 0.25, 17.87 + pdf.voffset, "CÓDIGO PRODUTOS", '', {:align => :center}
       pdf.ibox pdf.hprodutos, 5.86, 2.35, 17.87 + pdf.voffset, "DESCRIÇÃO DO PRODUTO / SERVIÇO", '', {:align => :center}
@@ -302,9 +356,6 @@ module RubyDanfe
     	  pdf.ibox 0.85, 5.08, 5.33, 25.06 + pdf.voffset, "VALOR TOTAL DOS SERVIÇOS", xml['total/vServ']
     	  pdf.ibox 0.85, 5.08, 10.41, 25.06 + pdf.voffset, "BASE DE CÁLCULO DO ISSQN", xml['total/vBCISS']
     	  pdf.ibox 0.85, 5.28, 15.49, 25.06 + pdf.voffset, "VALOR DO ISSQN", xml['total/ISSTot']
-      else
-        # pdf.hprodutos += 2.55
-        pdf.voffset_pos += 2.55
       end
 
       pdf.ititle 0.42, 10.00, 0.25, 25.91 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
@@ -316,52 +367,6 @@ module RubyDanfe
 
       pdf.itext 0.25, 28.7, pdf.software, :size => 7
 
-    end
-
-
-    # PRODUTOS
-    pdf.font_size(6) do
-      pdf.itable pdf.hprodutos - 0.40, 21.50, 0.25, 18.17 + pdf.voffset, 
-        xml.collect('det') { |det|
-          [
-            det.css('prod/cProd').text, #I02
-            det.css('prod/xProd').text + (det.css('infAdProd').any? ? "\n" + det.css('infAdProd').text.gsub(';', "\n") : ''), #I04
-            det.css('prod/NCM').text, #I05
-            det.css('ICMS/*/orig').text + det.css('ICMS/*/CST').text + det.css('ICMS/*/CSOSN').text, #N11
-            det.css('prod/CFOP').text, #I08
-            det.css('prod/uCom').text, #I09
-            numerify(det.css('prod/qCom').text), #I10 
-            numerify(det.css('prod/vUnCom').text), #I10a
-            numerify(det.css('prod/vProd').text), #I11
-            numerify(det.css('ICMS/*/vBC').text), #N15
-            numerify(det.css('ICMS/*/vICMS').text), #N17   
-            numerify(det.css('IPI/*/vIPI').text), #O14
-            numerify(det.css('ICMS/*/pICMS').text), #N16
-            numerify(det.css('IPI/*/pIPI').text) #O13 
-          ]
-        },
-        :column_widths => {
-          0 => 2.10.cm, 
-          1 => 5.86.cm,
-          2 => 1.10.cm,
-          3 => 0.80.cm,
-          4 => 0.80.cm,
-          5 => 0.70.cm,
-          6 => 1.20.cm,
-          7 => 1.20.cm,
-          8 => 1.50.cm,
-          9 => 1.50.cm,
-          10 => 1.00.cm,
-          11 => 1.00.cm,
-          12 => 0.90.cm,
-          13 => 0.90.cm
-        },
-        :cell_style => {:padding => 2, :border_width => 0} do |table|
-          pdf.dash(4);
-          table.column(6..13).style(:align => :right)
-          table.column(0..13).border_width = 1
-          table.column(0..13).borders = [:bottom]
-        end
     end
 
     pdf.page_count.times do |i|
