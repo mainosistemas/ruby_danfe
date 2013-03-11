@@ -62,7 +62,7 @@ module RubyDanfe
   
   class Document < Prawn::Document
 
-    attr_accessor :voffset, :voffset_pos, :hprodutos, :software
+    attr_accessor :voffset, :voffset_pos, :hprodutos, :software, :voffset_fp
 
     def ititle(h, w, x, y, title)
       self.text_box title, :size => 10, :at => [x.cm, invert(y.cm) - 2], :width => w.cm, :height => h.cm, :style => :bold
@@ -120,6 +120,9 @@ module RubyDanfe
        
     def itable(h, w, x, y, data, options = {}, &block)
       self.bounding_box [x.cm, invert(y.cm)], :width => w.cm, :height => h.cm do
+        self.transparent(0.0) do
+          self.image File.dirname(__FILE__) + '/../data/pixel.png', :height => (self.voffset_fp).cm, :padding => 0
+        end
         self.table data, options do |table|
           yield(table)
         end
@@ -140,12 +143,27 @@ module RubyDanfe
     pdf.voffset = -1.27
     pdf.voffset_pos = 0
     pdf.hprodutos = 6.77
+    pdf.voffset_fp = 8
  
     pdf.font "Times-Roman" # Official font
 
+    # Aumenta o espaço de produtos se não houver informações de ISS
+    if xml['total/ISSTot'] == ''
+      pdf.hprodutos += 3.82
+      # pdf.hprodutos += 2.55
+      pdf.voffset_pos += 2.55
+      # pdf.voffset_fp += 2.55
+    end
+    faturas = xml.xml.css('cobr dup') rescue []
+    if faturas.any?
+      pdf.voffset = 0
+      pdf.hprodutos -= 1.27
+      pdf.voffset_pos -= 1.27
+    end
+
     # PRODUTOS
     pdf.font_size(6) do
-      pdf.itable pdf.hprodutos - 0.40, 21.50, 0.25, 18.17 + pdf.voffset, 
+      pdf.itable pdf.hprodutos - 0.40 + 8, 21.50, 0.25, 10.17 + pdf.voffset,
         xml.collect('det') { |det|
           [
             det.css('prod/cProd').text, #I02
@@ -312,13 +330,6 @@ module RubyDanfe
 	  pdf.ibox 0.85, 4.83, 9.27, 16.60 + pdf.voffset, "NUMERAÇÃO"
 	  pdf.inumeric 0.85, 3.43, 14.10, 16.60 + pdf.voffset, "PESO BRUTO", xml['vol/pesoB'], {:decimals => 3, :style => :bold}
 	  pdf.inumeric 0.85, 3.30, 17.53, 16.60 + pdf.voffset, "PESO LÍQUIDO", xml['vol/pesoL'], {:decimals => 3, :style => :bold}
-
-
-    # Aumenta o espaço de produtos se não houver informações de ISS
-    if xml['total/ISSTot'] == ''
-      pdf.hprodutos += 3.82
-      pdf.voffset_pos += 2.55
-    end
 
     # Produtos
     pdf.page_count.times do |i|
