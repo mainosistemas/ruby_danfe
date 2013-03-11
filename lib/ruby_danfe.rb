@@ -62,7 +62,7 @@ module RubyDanfe
   
   class Document < Prawn::Document
 
-    attr_accessor :voffset, :hprodutos
+    attr_accessor :voffset, :voffset_pos, :hprodutos, :software
 
     def ititle(h, w, x, y, title)
       self.text_box title, :size => 10, :at => [x.cm, invert(y.cm) - 2], :width => w.cm, :height => h.cm, :style => :bold
@@ -127,7 +127,7 @@ module RubyDanfe
     end
   end
   
-  def self.generatePDF(xml)
+  def self.generatePDF(xml, options={})
   
     pdf = Document.new(
       :page_size => 'A4',
@@ -138,6 +138,7 @@ module RubyDanfe
       :botton_margin => 0
     )
     pdf.voffset = -1.27
+    pdf.voffset_pos = 0
  
     pdf.font "Times-Roman" # Official font   
     
@@ -294,15 +295,18 @@ module RubyDanfe
   	  pdf.ibox 0.85, 5.08, 10.41, 25.06 + pdf.voffset, "BASE DE CÁLCULO DO ISSQN", xml['total/vBCISS']
   	  pdf.ibox 0.85, 5.28, 15.49, 25.06 + pdf.voffset, "VALOR DO ISSQN", xml['total/ISSTot']
     else
-      pdf.voffset += 2.55
+      pdf.hprodutos += 2.55
+      pdf.voffset_pos += 2.55
     end
 
-    pdf.ititle 0.42, 10.00, 0.25, 25.91 + pdf.voffset, "DADOS ADICIONAIS"
+    pdf.ititle 0.42, 10.00, 0.25, 25.91 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
 
     # valor anterior: 3.07
-    pdf.ibox 1.30, 12.93, 0.25, 26.33 + pdf.voffset, "INFORMAÇÕES COMPLEMENTARES", xml['infAdic/infCpl'], {:size => 8, :valign => :top}
+    pdf.ibox 1.30, 12.93, 0.25, 26.33 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", xml['infAdic/infCpl'], {:size => 8, :valign => :top}
     
-    pdf.ibox 1.30, 7.62, 13.17, 26.33 + pdf.voffset, "RESERVADO AO FISCO"
+    pdf.ibox 1.30, 7.62, 13.17, 26.33 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
+
+    pdf.itext 0.25, 28.7, pdf.software, :size => 7
 
     end
 
