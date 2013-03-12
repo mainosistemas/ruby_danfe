@@ -229,7 +229,7 @@ module RubyDanfe
         logo = "/opt/logos_danfe/#{xml['emit/CNPJ']}.jpg"
         # iimage(h, w, x, y, document)
         # largura da caixa / 2 - 0.5w
-        pdf.iimage nil, 2.48, 2.49, 2.60, logo
+        pdf.iimage nil, 3.48, 2.49, 2.60, logo
         valign = :bottom
       end
 
@@ -373,9 +373,9 @@ module RubyDanfe
       pdf.ititle 0.42, 10.00, 0.25, 25.91 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
 
       # valor anterior: 3.07
-      pdf.ibox 1.30, 12.93, 0.25, 26.33 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", xml['infAdic/infCpl'], {:size => 8, :valign => :top}
+      pdf.ibox 1.75, 12.93, 0.25, 26.33 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", xml['infAdic/infCpl'], {:size => 8, :valign => :top, :min_font_size => 6}
       
-      pdf.ibox 1.30, 7.62, 13.17, 26.33 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
+      pdf.ibox 1.75, 7.62, 13.17, 26.33 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
 
       pdf.itext 0.25, 29.7, pdf.software, :size => 7
 
