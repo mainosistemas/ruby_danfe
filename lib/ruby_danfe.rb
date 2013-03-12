@@ -85,7 +85,9 @@ module RubyDanfe
     end
 
     def iimage(h, w, x, y, document)
-      self.image document, :at => [x.cm, invert(y.cm)], :width => (w.present? ? w.cm : nil), :height => (h.present? ? h.cm : nil)
+      self.bounding_box [x.cm, invert(y.cm)], :width => w.cm, :height => h.cm do
+        self.image document, :position => :center, :vposition => :center, :fit => [w.cm, h.cm]
+      end
     end
     
     def idate(h, w, x, y, title = '', info = '', options = {})
@@ -229,7 +231,7 @@ module RubyDanfe
         logo = "/opt/logos_danfe/#{xml['emit/CNPJ']}.jpg"
         # iimage(h, w, x, y, document)
         # largura da caixa / 2 - 0.5w
-        pdf.iimage nil, 3.48, 2.49, 2.60, logo
+        pdf.iimage 2, 7.46, 0.25, 2.60, logo
         valign = :bottom
       end
 
