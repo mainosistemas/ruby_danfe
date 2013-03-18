@@ -303,17 +303,20 @@ module RubyDanfe
 
     pdf.ititle 0.42, 5.60, 0.25, 12.36 + pdf.voffset, "CÁLCULO DO IMPOSTO"
 
-  	pdf.inumeric 0.85, 4.06, 0.25, 12.78 + pdf.voffset, "BASE DE CÁLCULO DO ICMS", xml['ICMSTot/vBC'], :style => :bold
-  	pdf.inumeric 0.85, 4.06, 4.31, 12.78 + pdf.voffset, "VALOR DO ICMS", xml['ICMSTot/vICMS'], :style => :bold
-  	pdf.inumeric 0.85, 4.06, 8.37, 12.78 + pdf.voffset, "BASE DE CÁLCULO DO ICMS ST", xml['ICMSTot/vBCST'], :style => :bold
-  	pdf.inumeric 0.85, 4.06, 12.43, 12.78 + pdf.voffset, "VALOR DO ICMS ST", xml['ICMSTot/vST'], :style => :bold
-  	pdf.inumeric 0.85, 4.32, 16.49, 12.78 + pdf.voffset, "VALOR TOTAL DOS PRODUTOS", xml['ICMSTot/vProd'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 0.25, 13.63 + pdf.voffset, "VALOR DO FRETE", xml['ICMSTot/vFrete'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 3.71, 13.63 + pdf.voffset, "VALOR DO SEGURO", xml['ICMSTot/vSeg'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 7.17, 13.63 + pdf.voffset, "DESCONTO", xml['ICMSTot/vDesc'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 10.63, 13.63 + pdf.voffset, "OUTRAS DESPESAS ACESSORIAS", xml['ICMSTot/vOutro'], :style => :bold
-	  pdf.inumeric 0.85, 3.46, 14.09, 13.63 + pdf.voffset, "VALOR DO IPI", xml['ICMSTot/vIPI'], :style => :bold
-	  pdf.inumeric 0.85, 3.27, 17.55, 13.63 + pdf.voffset, "VALOR TOTAL DA NOTA", xml['ICMSTot/vNF'], :style => :bold
+  	pdf.inumeric 0.85, 2.97, 0.25, 12.78 + pdf.voffset, "BASE CÁLCULO ICMS", xml['ICMSTot/vBC'], :style => :bold
+  	pdf.inumeric 0.85, 2.97, 3.22, 12.78 + pdf.voffset, "VALOR DO ICMS", xml['ICMSTot/vICMS'], :style => :bold
+  	pdf.inumeric 0.85, 2.97, 6.19, 12.78 + pdf.voffset, "BASE DE CÁLC. ICMS ST", xml['ICMSTot/vBCST'], :style => :bold
+  	pdf.inumeric 0.85, 2.97, 9.16, 12.78 + pdf.voffset, "VALOR ICMS ST", xml['ICMSTot/vST'], :style => :bold
+    pdf.inumeric 0.85, 2.97, 12.13, 12.78 + pdf.voffset, "VALOR IMP. IMPORTAÇÃO", xml['ICMSTot/vPIS'], :style => :bold
+    pdf.inumeric 0.85, 2.72, 15.1, 12.78 + pdf.voffset, "VALOR DO PIS", xml['ICMSTot/vPIS'], :style => :bold
+    pdf.inumeric 0.85, 2.97, 17.82, 12.78 + pdf.voffset, "VALOR TOTAL PROD.", xml['ICMSTot/vProd'], :style => :bold
+	  pdf.inumeric 0.85, 2.97, 0.25, 13.63 + pdf.voffset, "VALOR DO FRETE", xml['ICMSTot/vFrete'], :style => :bold
+	  pdf.inumeric 0.85, 2.97, 3.22, 13.63 + pdf.voffset, "VALOR DO SEGURO", xml['ICMSTot/vSeg'], :style => :bold
+	  pdf.inumeric 0.85, 2.97, 6.19, 13.63 + pdf.voffset, "DESCONTO", xml['ICMSTot/vDesc'], :style => :bold
+	  pdf.inumeric 0.85, 2.97, 9.16, 13.63 + pdf.voffset, "OUTRAS DESPESAS", xml['ICMSTot/vOutro'], :style => :bold
+    pdf.inumeric 0.85, 2.97, 12.13, 13.63 + pdf.voffset, "VALOR DO IPI", xml['ICMSTot/vIPI'], :style => :bold
+	  pdf.inumeric 0.85, 2.72, 15.1, 13.63 + pdf.voffset, "VALOR DA COFINS", xml['ICMSTot/vCOFINS'], :style => :bold
+	  pdf.inumeric 0.85, 2.97, 17.82, 13.63 + pdf.voffset, "VALOR TOTAL DA NOTA", xml['ICMSTot/vNF'], :style => :bold
 	
     pdf.ititle 0.42, 10.00, 0.25, 14.48 + pdf.voffset, "TRANSPORTADOR / VOLUMES TRANSPORTADOS"
 
