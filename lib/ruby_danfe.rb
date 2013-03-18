@@ -185,10 +185,10 @@ module RubyDanfe
             numerify(det.css('prod/vUnCom').text), #I10a
             numerify(det.css('prod/vProd').text), #I11
             numerify(det.css('ICMS/*/vBC').text), #N15
-            numerify(det.css('ICMS/*/vICMS').text), #N17   
+            numerify(det.css('ICMS/*/vICMS').text), #N17
             numerify(det.css('IPI/*/vIPI').text), #O14
             numerify(det.css('ICMS/*/pICMS').text), #N16
-            numerify(det.css('IPI/*/pIPI').text) #O13 
+            numerify(det.css('IPI/*/pIPI').text) #O13
           ]
         },
         :column_widths => {
@@ -311,7 +311,7 @@ module RubyDanfe
   	pdf.inumeric 0.85, 2.97, 3.22, 12.78 + pdf.voffset, "VALOR DO ICMS", xml['ICMSTot/vICMS'], :style => :bold
   	pdf.inumeric 0.85, 2.97, 6.19, 12.78 + pdf.voffset, "BASE DE CÁLC. ICMS ST", xml['ICMSTot/vBCST'], :style => :bold
   	pdf.inumeric 0.85, 2.97, 9.16, 12.78 + pdf.voffset, "VALOR ICMS ST", xml['ICMSTot/vST'], :style => :bold
-    pdf.inumeric 0.85, 2.97, 12.13, 12.78 + pdf.voffset, "VALOR IMP. IMPORTAÇÃO", xml['ICMSTot/vPIS'], :style => :bold
+    pdf.inumeric 0.85, 2.97, 12.13, 12.78 + pdf.voffset, "VALOR IMP. IMPORTAÇÃO", xml['ICMSTot/vII'], :style => :bold
     pdf.inumeric 0.85, 2.72, 15.1, 12.78 + pdf.voffset, "VALOR DO PIS", xml['ICMSTot/vPIS'], :style => :bold
     pdf.inumeric 0.85, 2.97, 17.82, 12.78 + pdf.voffset, "VALOR TOTAL PROD.", xml['ICMSTot/vProd'], :style => :bold
 	  pdf.inumeric 0.85, 2.97, 0.25, 13.63 + pdf.voffset, "VALOR DO FRETE", xml['ICMSTot/vFrete'], :style => :bold
