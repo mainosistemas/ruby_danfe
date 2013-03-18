@@ -364,7 +364,7 @@ module RubyDanfe
       if inf_comp != '' && !inf_comp.nil? || i == 0
         pdf.ititle 0.42, 10.00, 0.25, 25.36 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
         pdf.ibox 2.30, 7.62, 13.17, 25.78 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
-        inf_comp = pdf.ibox 2.30, 12.93, 0.25, 25.78 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", inf_comp, {:size => 8, :valign => :top, :min_font_size => 5, :overflow => :shrink_to_fit}
+        inf_comp = pdf.ibox 2.30, 12.93, 0.25, 25.78 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", inf_comp, {:size => 8, :valign => :top, :min_font_size => 5, :overflow => :truncate}
       elsif !fim_inf_comp
         fim_inf_comp = true
         pdf.hprodutos += 2.72
