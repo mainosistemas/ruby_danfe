@@ -107,7 +107,11 @@ module RubyDanfe
       }.merge(options)
       self.stroke_rectangle at, w, h if options[:border] == 1
       self.text_box title, :size => 6, :at => [at[0] + 2, at[1] - 2], :width => w - 4, :height => 8 if title != ''
-      self.formatted_text_box Parser.to_array(info), :size => options[:size], :at => [at[0] + 2, at[1] - (title != '' ? 14 : 4) ], :width => w - 4, :height => h - (title != '' ? 14 : 4), :align => options[:align], :style => options[:style], :valign => options[:valign], :inline_format => options[:inline_format]
+      if options[:inline_format]
+        self.formatted_text_box Parser.to_array(info), :size => options[:size], :at => [at[0] + 2, at[1] - (title != '' ? 14 : 4) ], :width => w - 4, :height => h - (title != '' ? 14 : 4), :align => options[:align], :style => options[:style], :valign => options[:valign], :inline_format => options[:inline_format], :overflow => options[:overflow], :min_font_size => options[:min_font_size]
+      else
+        self.text_box info, :size => options[:size], :at => [at[0] + 2, at[1] - (title != '' ? 14 : 4) ], :width => w - 4, :height => h - (title != '' ? 14 : 4), :align => options[:align], :style => options[:style], :valign => options[:valign], :overflow => options[:overflow], :min_font_size => options[:min_font_size]
+      end
     end
     
     def inumeric(h, w, x, y, title = '', info = '', options = {})
@@ -122,6 +126,8 @@ module RubyDanfe
        
     def itable(h, w, x, y, data, options = {}, &block)
       self.bounding_box [x.cm, invert(y.cm)], :width => w.cm, :height => h.cm do
+        # Usa um png transparente para empurrar a tabela para baixo na primeira
+        # pagina. Como resolver essa gambiarra?
         self.transparent(0.0) do
           self.image File.dirname(__FILE__) + '/../data/pixel.png', :height => (self.voffset_fp).cm, :padding => 0
         end
@@ -337,20 +343,35 @@ module RubyDanfe
 
 
 
-
-    pdf.ititle 0.42, 10.00, 0.25, 25.36 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
-    pdf.ibox 2.30, 12.93, 0.25, 25.78 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", 'Inf. contrib.: ' + xml['infAdic/infCpl'] + "\n" + 'Inf. fisco: ' + xml['infAdic/infAdFisco'], {:size => 8, :valign => :top, :min_font_size => 3}
-    pdf.ibox 2.30, 7.62, 13.17, 25.78 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
+    inf_comp = ''
+    inf_comp += "Inf. contrib.: #{xml['infAdic/infCpl']}" if xml['infAdic/infCpl'] != ''
+    inf_comp += "\nInf. fisco: #{xml['infAdic/infAdFisco']}" if xml['infAdic/infAdFisco'] != ''
 
     # Produtos
+    fim_inf_comp = false
+
     pdf.page_count.times do |i|
       pdf.go_to_page(i + 1)
 
       if i == 1
-        pdf.hprodutos += 10.72
+        pdf.hprodutos += 8
         pdf.voffset_pos += 8
         pdf.voffset -= 8
       end
+
+
+
+      if inf_comp != '' && !inf_comp.nil? || i == 0
+        pdf.ititle 0.42, 10.00, 0.25, 25.36 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
+        pdf.ibox 2.30, 7.62, 13.17, 25.78 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
+        inf_comp = pdf.ibox 2.30, 12.93, 0.25, 25.78 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", inf_comp, {:size => 8, :valign => :top, :min_font_size => 5, :overflow => :shrink_to_fit}
+      elsif !fim_inf_comp
+        fim_inf_comp = true
+        pdf.hprodutos += 2.72
+      end
+
+
+
 
       pdf.ititle 0.42, 10.00, 0.25, 17.45 + pdf.voffset, "DADOS DOS PRODUTOS / SERVIÇOS"
 
