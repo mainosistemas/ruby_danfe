@@ -144,7 +144,7 @@ module RubyDanfe
     )
     pdf.voffset = -1.27
     pdf.voffset_pos = 0
-    pdf.hprodutos = 6.77
+    pdf.hprodutos = 6.22
     pdf.voffset_fp = 8
     pdf.software = "Emitido por Maino Sistemas (www.maino.com.br) - Maino Comex NF-e (www.comexnfe.com.br)"
  
@@ -202,11 +202,9 @@ module RubyDanfe
           13 => 0.90.cm
         },
         :cell_style => {:padding => 2, :border_width => 0} do |table|
-          # pdf.dash(4)
           table.column(6..13).style(:align => :right)
           table.column(0..13).border_width = 1
           table.column(0..13).borders = []
-          # pdf.undash
         end
     end
     
@@ -337,12 +335,19 @@ module RubyDanfe
 	  pdf.inumeric 0.85, 3.43, 14.10, 16.60 + pdf.voffset, "PESO BRUTO", xml['vol/pesoB'], {:decimals => 3, :style => :bold}
 	  pdf.inumeric 0.85, 3.30, 17.53, 16.60 + pdf.voffset, "PESO LÍQUIDO", xml['vol/pesoL'], {:decimals => 3, :style => :bold}
 
+
+
+
+    pdf.ititle 0.42, 10.00, 0.25, 25.36 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
+    pdf.ibox 2.30, 12.93, 0.25, 25.78 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", 'Inf. contrib.: ' + xml['infAdic/infCpl'] + "\n" + 'Inf. fisco: ' + xml['infAdic/infAdFisco'], {:size => 8, :valign => :top, :min_font_size => 3}
+    pdf.ibox 2.30, 7.62, 13.17, 25.78 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
+
     # Produtos
     pdf.page_count.times do |i|
       pdf.go_to_page(i + 1)
 
       if i == 1
-        pdf.hprodutos += 8
+        pdf.hprodutos += 10.72
         pdf.voffset_pos += 8
         pdf.voffset -= 8
       end
@@ -374,13 +379,6 @@ module RubyDanfe
     	  pdf.ibox 0.85, 5.08, 10.41, 25.06 + pdf.voffset, "BASE DE CÁLCULO DO ISSQN", xml['total/vBCISS']
     	  pdf.ibox 0.85, 5.28, 15.49, 25.06 + pdf.voffset, "VALOR DO ISSQN", xml['total/ISSTot']
       end
-
-      pdf.ititle 0.42, 10.00, 0.25, 25.91 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
-
-      # valor anterior: 3.07
-      pdf.ibox 1.75, 12.93, 0.25, 26.33 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", xml['infAdic/infCpl'], {:size => 8, :valign => :top, :min_font_size => 6}
-      
-      pdf.ibox 1.75, 7.62, 13.17, 26.33 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
 
       pdf.itext 0.25, 29.7, pdf.software, :size => 7
 
