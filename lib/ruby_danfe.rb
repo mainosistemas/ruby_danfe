@@ -344,8 +344,8 @@ module RubyDanfe
 
 
     inf_comp = ''
-    inf_comp += "Inf. contrib.: #{xml['infAdic/infCpl']}" if xml['infAdic/infCpl'] != ''
-    inf_comp += "\nInf. fisco: #{xml['infAdic/infAdFisco']}" if xml['infAdic/infAdFisco'] != ''
+    inf_comp += "Inf. contrib.: #{xml['infAdic/infCpl'].gsub(';',"\n")}" if xml['infAdic/infCpl'] != ''
+    inf_comp += "\nInf. fisco: #{xml['infAdic/infAdFisco'].gsub(';',"\n")}" if xml['infAdic/infAdFisco'] != ''
 
     # Produtos
     fim_inf_comp = false
