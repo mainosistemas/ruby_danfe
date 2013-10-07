@@ -11,7 +11,7 @@ require 'burocracias'
 def numerify(number, decimals = 2)
   return '' if !number || number == ''
   int, frac = ("%.#{decimals}f" % number).split('.')
-  int.gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1\.")  
+  int.gsub!(/(\d)(?=(\d\d\d)+(?!\d))/, "\\1\.")
   int + "," + frac
 end
 
@@ -59,7 +59,7 @@ module RubyDanfe
       self['dest/CNPJ'] != '' ? self['dest/CNPJ'].as_cnpj : self['dest/CPF'].as_cpf
     end
   end
-  
+
   class Document < Prawn::Document
 
     attr_accessor :voffset, :voffset_pos, :hprodutos, :software, :voffset_fp
@@ -67,15 +67,15 @@ module RubyDanfe
     def ititle(h, w, x, y, title)
       self.text_box title, :size => 10, :at => [x.cm, invert(y.cm) - 2], :width => w.cm, :height => h.cm, :style => :bold
     end
-   
+
     def ibarcode(h, w, x, y, info)
       Barby::Code128C.new(info).annotate_pdf(self, :x => x.cm, :y => invert(y.cm), :width => w.cm, :height => h.cm) if info != ''
     end
-     
+
     def irectangle(h, w, x, y)
       self.stroke_rectangle [x.cm, invert(y.cm)], w.cm, h.cm
     end
-    
+
     def ibox(h, w, x, y, title = '', info = '', options = {})
       box [x.cm, invert(y.cm)], w.cm, h.cm, title, info, options
     end
@@ -89,12 +89,12 @@ module RubyDanfe
         self.image document, :position => :center, :vposition => :center, :fit => [w.cm, h.cm]
       end
     end
-    
+
     def idate(h, w, x, y, title = '', info = '', options = {})
       tt = info.split('-')
       ibox(h, w, x, y, title, tt.any? ? "#{tt[2]}/#{tt[1]}/#{tt[0]}" : '', options)
     end
-    
+
     def box(at, w, h, title = '', info = '', options = {})
       options = {
         :align => :left,
@@ -113,7 +113,7 @@ module RubyDanfe
         self.text_box info, :size => options[:size], :at => [at[0] + 2, at[1] - (title != '' ? 14 : 4) ], :width => w - 4, :height => h - (title != '' ? 14 : 4), :align => options[:align], :style => options[:style], :valign => options[:valign], :overflow => options[:overflow], :min_font_size => options[:min_font_size]
       end
     end
-    
+
     def inumeric(h, w, x, y, title = '', info = '', options = {})
       numeric [x.cm, invert(y.cm)], w.cm, h.cm, title, info, options
     end
@@ -123,7 +123,7 @@ module RubyDanfe
       info = numerify(info, options[:decimals]) if info != ''
       box at, w, h, title, info, options.merge({:align => :right})
     end
-       
+
     def itable(h, w, x, y, data, options = {}, &block)
       self.bounding_box [x.cm, invert(y.cm)], :width => w.cm, :height => h.cm do
         # Usa um png transparente para empurrar a tabela para baixo na primeira
@@ -137,9 +137,9 @@ module RubyDanfe
       end
     end
   end
-  
+
   def self.generatePDF(xml, options={})
-  
+
     pdf = Document.new(
       :page_size => 'A4',
       :page_layout => :portrait,
@@ -153,7 +153,7 @@ module RubyDanfe
     pdf.hprodutos = 6.22
     pdf.voffset_fp = 8
     pdf.software = "Emitido por Maino Sistemas (www.maino.com.br) - Maino Comex NF-e (www.comexnfe.com.br)"
- 
+
     pdf.font "Times-Roman" # Official font
 
     # Aumenta o espaço de produtos se não houver informações de ISS
@@ -181,7 +181,7 @@ module RubyDanfe
             det.css('ICMS/*/orig').text + det.css('ICMS/*/CST').text + det.css('ICMS/*/CSOSN').text, #N11
             det.css('prod/CFOP').text, #I08
             det.css('prod/uCom').text, #I09
-            numerify(det.css('prod/qCom').text), #I10 
+            numerify(det.css('prod/qCom').text), #I10
             numerify(det.css('prod/vUnCom').text), #I10a
             numerify(det.css('prod/vProd').text), #I11
             numerify(det.css('ICMS/*/vBC').text), #N15
@@ -192,7 +192,7 @@ module RubyDanfe
           ]
         },
         :column_widths => {
-          0 => 2.10.cm, 
+          0 => 2.10.cm,
           1 => 5.86.cm,
           2 => 1.10.cm,
           3 => 0.80.cm,
@@ -213,16 +213,16 @@ module RubyDanfe
           table.column(0..13).borders = []
         end
     end
-    
+
     pdf.repeat :all do
-    
+
       # CANHOTO
-          
+
       pdf.ibox 0.85, 16.10, 0.25, 0.42, "RECEBEMOS DE " + xml['emit/xNome'] + " OS PRODUTOS CONSTANTES DA NOTA FISCAL INDICADA ABAIXO"
       pdf.ibox 0.85, 4.10, 0.25, 1.27, "DATA DE RECEBIMENTO"
     	pdf.ibox 0.85, 12.00, 4.35, 1.27, "IDENTIFICAÇÃO E ASSINATURA DO RECEBEDOR"
 
-    	pdf.ibox 1.70, 4.50, 16.35, 0.42, '', 
+    	pdf.ibox 1.70, 4.50, 16.35, 0.42, '',
     	  "NF-e\n" +
     	  "N°. " + xml.numero_nfe_formatado + "\n" +
     	  "Série " + "%03d" % xml['ide/serie'], {:align => :center, :valign => :center}
@@ -242,22 +242,22 @@ module RubyDanfe
 
       pdf.ibox 3.92, 7.46, 0.25, 2.54, '',
         "<b><font size='10'>#{xml['emit/xNome']}</font></b>" + "\n" +
-        xml['enderEmit/xLgr'] + ", " + xml['enderEmit/nro'] + ", " + xml['enderEmit/xCpl'] + "\n" + 
+        xml['enderEmit/xLgr'] + ", " + xml['enderEmit/nro'] + ", " + xml['enderEmit/xCpl'] + "\n" +
         xml['enderEmit/xBairro'] + " - " + xml['enderEmit/CEP'].as_cep + "\n" +
         xml['enderEmit/xMun'] + " - " + xml['enderEmit/UF'] +
         (xml['enderEmit/fone'].present? ? " Fone/Fax: " + xml['enderEmit/fone'].as_phone_number : '') + " " + xml['enderEmit/email'], {:align => :center, :valign => valign, :size => 8, :inline_format => true}
 
 
       pdf.ibox 3.92, 3.08, 7.71, 2.54
-      
+
       pdf.ibox 0.60, 3.08, 7.71, 2.54, '', "DANFE", {:size => 12, :align => :center, :border => 0, :style => :bold}
       pdf.ibox 1.20, 3.08, 7.71, 3.14, '', "Documento Auxiliar da Nota Fiscal Eletrônica", {:size => 8, :align => :center, :border => 0}
       pdf.ibox 0.60, 3.08, 7.71, 4.34, '', "#{xml['ide/tpNF']} - " + (xml['ide/tpNF'] == '0' ? 'ENTRADA' : 'SAÍDA'), {:size => 8, :align => :center, :border => 0}
 
-      pdf.ibox 1.00, 3.08, 7.71, 4.94, '', 
+      pdf.ibox 1.00, 3.08, 7.71, 4.94, '',
     	  "N°. " + xml.numero_nfe_formatado + "\n" +
     	  "SÉRIE " + "%03d" % xml['ide/serie'], {:size => 8, :align => :center, :valign => :center, :border => 0, :style => :bold}
-          
+
       pdf.ibox 2.20, 10.02, 10.79, 2.54
       pdf.ibarcode 1.50, 8.00, 10.9010, 4.44, xml.chave_nfe
       pdf.ibox 0.85, 10.02, 10.79, 4.74, "CHAVE DE ACESSO", xml.chave_nfe.gsub(/(\d)(?=(\d\d\d\d)+(?!\d))/, "\\1 "), {:style => :bold, :align => :center}
@@ -321,7 +321,7 @@ module RubyDanfe
     pdf.inumeric 0.85, 2.97, 12.13, 13.63 + pdf.voffset, "VALOR DO IPI", xml['ICMSTot/vIPI'], :style => :bold
 	  pdf.inumeric 0.85, 2.72, 15.1, 13.63 + pdf.voffset, "VALOR DA COFINS", xml['ICMSTot/vCOFINS'], :style => :bold
 	  pdf.inumeric 0.85, 2.97, 17.82, 13.63 + pdf.voffset, "VALOR TOTAL DA NOTA", xml['ICMSTot/vNF'], :style => :bold
-	
+
     pdf.ititle 0.42, 10.00, 0.25, 14.48 + pdf.voffset, "TRANSPORTADOR / VOLUMES TRANSPORTADOS"
 
   	pdf.ibox 0.85, 9.02, 0.25, 14.90 + pdf.voffset, "RAZÃO SOCIAL", xml['transporta/xNome'], :style => :bold
@@ -364,7 +364,7 @@ module RubyDanfe
       if inf_comp != '' && !inf_comp.nil? || i == 0
         pdf.ititle 0.42, 10.00, 0.25, 25.36 + pdf.voffset + pdf.voffset_pos, "DADOS ADICIONAIS"
         pdf.ibox 2.30, 7.62, 13.17, 25.78 + pdf.voffset + pdf.voffset_pos, "RESERVADO AO FISCO"
-        inf_comp = pdf.ibox 2.30, 12.93, 0.25, 25.78 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", inf_comp, {:size => 8, :valign => :top, :min_font_size => 5, :overflow => :truncate}
+        inf_comp = pdf.ibox 2.30, 12.93, 0.25, 25.78 + pdf.voffset + pdf.voffset_pos, "INFORMAÇÕES COMPLEMENTARES", inf_comp, {:size => 8, :valign => :top, :min_font_size => 5, :overflow => :shrink_to_fit}
       elsif !fim_inf_comp
         fim_inf_comp = true
         pdf.hprodutos += 2.72
@@ -391,7 +391,7 @@ module RubyDanfe
       pdf.ibox pdf.hprodutos, 0.90, 19.91, 17.87 + pdf.voffset, "% IPI", '', {:align => :center}
 
       pdf.horizontal_line 0.25.cm, 20.80.cm, :at => invert((18.17 + pdf.voffset).cm)
-  	  
+
       if xml['total/ISSTot'] != ''
         pdf.ititle 0.42, 10.00, 0.25, 24.64 + pdf.voffset, "CÁLCULO DO ISSQN"
 
@@ -407,7 +407,7 @@ module RubyDanfe
 
     pdf.page_count.times do |i|
       pdf.go_to_page(i + 1)
-      pdf.ibox 1.00, 3.08, 7.71, 5.54, '', 
+      pdf.ibox 1.00, 3.08, 7.71, 5.54, '',
       "FOLHA #{i + 1} de #{pdf.page_count}", {:size => 8, :align => :center, :valign => :center, :border => 0, :style => :bold}
 
       # MARCAS D'AGUA
@@ -421,17 +421,17 @@ module RubyDanfe
         pdf.draw_text "FALTA PROTOCOLO DE APROVAÇÃO DA SEFAZ", :at => [65,185], :size => 21
       end
     end
-    
+
     return pdf
-      
+
   end
-  
-  def self.render(xml_string)  
+
+  def self.render(xml_string)
     xml = XML.new(xml_string)
     pdf = generatePDF(xml)
     return pdf.render
   end
-  
+
   def self.generate(pdf_filename, xml_filename)
     xml = XML.new(File.new(xml_filename))
     pdf = generatePDF(xml)
