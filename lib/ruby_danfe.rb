@@ -182,8 +182,8 @@ module RubyDanfe
             det.css('prod/CFOP').text, #I08
             det.css('prod/uCom').text, #I09
             numerify(det.css('prod/qCom').text), #I10
-            numerify(det.css('prod/vUnCom').text), #I10a
-            numerify(det.css('prod/vProd').text), #I11
+            numerify(det.css('prod/vUnCom').text, 4), #I10a
+            numerify(det.css('prod/vProd').text, 4), #I11
             numerify(det.css('ICMS/*/vBC').text), #N15
             numerify(det.css('ICMS/*/vICMS').text), #N17
             numerify(det.css('IPI/*/vIPI').text), #O14
