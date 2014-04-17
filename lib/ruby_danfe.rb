@@ -28,13 +28,16 @@ module RubyDanfe
     def initialize(xml)
       @xml = Nokogiri::XML(xml)
     end
+
     def [](xpath)
       node = @xml.css(xpath)
       return node ? node.text : ''
     end
+
     def render
       RubyDanfe.render @xml.to_s
     end
+
     def collect(xpath, &block)
       result = []
       @xml.css(xpath).each do |det|
@@ -42,21 +45,39 @@ module RubyDanfe
       end
       result
     end
+
     def numero_nfe_formatado
       ("%09d" % self['ide/nNF']).scan(/.{3}|.+/).join(".")
     end
+
     def homologacao?
       self['//NFe//tpAmb'] == '2'
     end
+
     def previa?
       !@xml.css('protNFe nProt').any?
     end
+
     def chave_nfe
       self['chNFe'].present? ? self['chNFe'] : @xml.css('infNFe').first.attr('Id').gsub(/\D/, '')
     end
+
     def cpf_cnpj
       # self['dest/CNPJ'].present? ? self['dest/CNPJ'].insert(12, '-').insert(8, '/').insert(5, '.').insert(2, '.') : self['dest/CPF'].insert(9, '-').insert(6, '.').insert(3, '.')
       self['dest/CNPJ'] != '' ? self['dest/CNPJ'].as_cnpj : self['dest/CPF'].as_cpf
+    end
+
+    def modalidade_frete
+      case xml['transp/modFrete']
+      when '0'
+        '0 - EMITENTE'
+      when '1'
+        '1 - DEST.'
+      when '2'
+        '2 - TERCEIROS'
+      when '9'
+        '9 - SEM FRETE'
+      end
     end
   end
 
@@ -325,7 +346,7 @@ module RubyDanfe
     pdf.ititle 0.42, 10.00, 0.25, 14.48 + pdf.voffset, "TRANSPORTADOR / VOLUMES TRANSPORTADOS"
 
   	pdf.ibox 0.85, 9.02, 0.25, 14.90 + pdf.voffset, "RAZÃO SOCIAL", xml['transporta/xNome'], :style => :bold
-	  pdf.ibox 0.85, 2.79, 9.27, 14.90 + pdf.voffset, "FRETE POR CONTA", xml['transp/modFrete'] == '0' ? ' 0 - EMITENTE' : '1 - DEST.', :style => :bold, :align => :center
+	  pdf.ibox 0.85, 2.79, 9.27, 14.90 + pdf.voffset, "FRETE POR CONTA", xml.modalidade_frete, :style => :bold, :align => :center
 	  pdf.ibox 0.85, 1.78, 12.06, 14.90 + pdf.voffset, "CODIGO ANTT", xml['veicTransp/RNTC'], :style => :bold
 	  pdf.ibox 0.85, 2.29, 13.84, 14.90 + pdf.voffset, "PLACA DO VEÍCULO", xml['veicTransp/placa'], :style => :bold
 	  pdf.ibox 0.85, 0.76, 16.13, 14.90 + pdf.voffset, "UF", xml['veicTransp/UF'], :style => :bold
